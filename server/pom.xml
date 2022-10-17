@@ -4,18 +4,22 @@
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
-      <artifactId>tpe2-g6-parent-parent</artifactId>
+      <artifactId>tpe2-g6-parent</artifactId>
       <groupId>ar.edu.itba.pod</groupId>
       <version>1.0-SNAPSHOT</version>
    </parent>
-   <artifactId>tpe2-g6-parent-server</artifactId>
+   <artifactId>tpe2-g6-server</artifactId>
    <version>1.0-SNAPSHOT</version>
-   <name>tpe2-g6-parent-server</name>
+   <name>tpe2-g6-server</name>
    <dependencies>
       <dependency>
          <groupId>ar.edu.itba.pod</groupId>
-         <artifactId>tpe2-g6-parent-api</artifactId>
+         <artifactId>tpe2-g6-api</artifactId>
          <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>com.hazelcast</groupId>
+         <artifactId>hazelcast-all</artifactId>
       </dependency>
    </dependencies>
    <build>
