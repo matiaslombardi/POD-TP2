@@ -32,8 +32,8 @@ public class Query1 {
         // TODO: parse address from args
         HazelcastInstance hz = Utils.getHazelcastInstance();
 
-        Utils.parseReadings("data/lecturas.csv", hz);
-        Utils.parseSensorsData("data/sensores.csv", hz);
+        Utils.parseReadings("../../src/main/resources/data/lecturas.csv", hz);
+        Utils.parseSensorsData("../../src/main/resources/data/sensores.csv", hz);
 
         IMap<Integer, Reading> sensorIMap = hz.getMap(Constants.READINGS_MAP);
         KeyValueSource<Integer, Reading> source = KeyValueSource.fromMap(sensorIMap);

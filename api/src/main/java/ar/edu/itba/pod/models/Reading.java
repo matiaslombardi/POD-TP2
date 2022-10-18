@@ -15,6 +15,9 @@ public class Reading implements DataSerializable {
     private int time;
     private long hourlyCounts;
 
+    public Reading() {
+    }
+
     public Reading(int year, String month, int mDate, String day, int time, int sensorId, long hourlyCounts) {
         this.sensorId = sensorId;
         this.year = year;
@@ -29,6 +32,10 @@ public class Reading implements DataSerializable {
         return sensorId;
     }
 
+    public long getHourlyCounts() {
+        return hourlyCounts;
+    }
+
     public int getYear() {
         return year;
     }
@@ -36,7 +43,6 @@ public class Reading implements DataSerializable {
     public String getMonth() {
         return month;
     }
-
     public int getmDate() {
         return mDate;
     }
@@ -47,10 +53,6 @@ public class Reading implements DataSerializable {
 
     public int getTime() {
         return time;
-    }
-
-    public long getHourlyCounts() {
-        return hourlyCounts;
     }
 
     @Override

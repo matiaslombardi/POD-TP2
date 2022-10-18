@@ -11,14 +11,12 @@ public class Sensor implements DataSerializable {
     private String description;
     private Status status;
 
+    public Sensor() {}
+
     public Sensor(int id, String description, Status status) {
         this.id = id;
         this.description = description;
         this.status = status;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getDescription() {
@@ -27,6 +25,10 @@ public class Sensor implements DataSerializable {
 
     public Status getStatus() {
         return status;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
@@ -42,4 +44,5 @@ public class Sensor implements DataSerializable {
         description = in.readUTF();
         status = Status.values()[in.readInt()];
     }
+
 }
