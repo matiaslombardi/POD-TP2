@@ -15,7 +15,7 @@ public class Reading implements DataSerializable {
     private int time;
     private long hourlyCounts;
 
-    public Reading(int sensorId, int year, String month, int mDate, String day, int time, long hourlyCounts) {
+    public Reading(int year, String month, int mDate, String day, int time, int sensorId, long hourlyCounts) {
         this.sensorId = sensorId;
         this.year = year;
         this.month = month;
@@ -55,23 +55,23 @@ public class Reading implements DataSerializable {
 
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
-        out.writeInt(sensorId);
         out.writeInt(year);
         out.writeUTF(month);
         out.writeInt(mDate);
         out.writeUTF(day);
         out.writeInt(time);
+        out.writeInt(sensorId);
         out.writeLong(hourlyCounts);
     }
 
     @Override
     public void readData(ObjectDataInput in) throws IOException {
-        sensorId = in.readInt();
         year = in.readInt();
         month = in.readUTF();
         mDate = in.readInt();
         day = in.readUTF();
         time = in.readInt();
+        sensorId = in.readInt();
         hourlyCounts = in.readLong();
     }
 }

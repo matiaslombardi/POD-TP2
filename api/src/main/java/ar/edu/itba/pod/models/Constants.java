@@ -17,5 +17,4 @@ public class Constants {
     public final static int READING_SENSOR_ID = 7;
     public final static int HOURLY_COUNT = 9;
 
-
 }
