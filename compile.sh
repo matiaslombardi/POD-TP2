@@ -13,5 +13,5 @@ chmod +x run-server.sh
 cd $TP_PATH/client/target
 tar -xzf tpe2-g6-client-1.0-SNAPSHOT-bin.tar.gz
 cd tpe2-g6-client-1.0-SNAPSHOT
-chmod +x run-client.sh
+chmod +x run-query*
 cd $TP_PATH
