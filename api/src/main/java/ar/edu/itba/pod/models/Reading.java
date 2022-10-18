@@ -7,16 +7,15 @@ import com.hazelcast.nio.serialization.DataSerializable;
 import java.io.IOException;
 
 public class Reading implements DataSerializable {
-
     private int sensorId;
     private int year;
     private String month;
     private int mDate;
     private String day;
     private int time;
-    private int hourlyCounts;
+    private long hourlyCounts;
 
-    public Reading(int sensorId, int year, String month, int mDate, String day, int time, int hourlyCounts) {
+    public Reading(int sensorId, int year, String month, int mDate, String day, int time, long hourlyCounts) {
         this.sensorId = sensorId;
         this.year = year;
         this.month = month;
@@ -50,7 +49,7 @@ public class Reading implements DataSerializable {
         return time;
     }
 
-    public int getHourlyCounts() {
+    public long getHourlyCounts() {
         return hourlyCounts;
     }
 
@@ -62,7 +61,7 @@ public class Reading implements DataSerializable {
         out.writeInt(mDate);
         out.writeUTF(day);
         out.writeInt(time);
-        out.writeInt(hourlyCounts);
+        out.writeLong(hourlyCounts);
     }
 
     @Override
@@ -73,6 +72,6 @@ public class Reading implements DataSerializable {
         mDate = in.readInt();
         day = in.readUTF();
         time = in.readInt();
-        hourlyCounts = in.readInt();
+        hourlyCounts = in.readLong();
     }
 }
