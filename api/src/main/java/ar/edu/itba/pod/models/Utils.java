@@ -1,9 +1,5 @@
-package ar.edu.itba.pod.client;
+package ar.edu.itba.pod.models;
 
-import ar.edu.itba.pod.models.Constants;
-import ar.edu.itba.pod.models.Reading;
-import ar.edu.itba.pod.models.Sensor;
-import ar.edu.itba.pod.models.Status;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
@@ -81,10 +77,16 @@ public class Utils {
         config.setGroupConfig(groupConfig);
 
         ClientNetworkConfig clientNetworkConfig = new ClientNetworkConfig();
-        String[] addresses = {"127.0.0.1:5702"};
+        String[] addresses = {"192.168.0.127:5701"};
         clientNetworkConfig.addAddress(addresses);
         config.setNetworkConfig(clientNetworkConfig);
 
         return HazelcastClient.newHazelcastClient(config);
+    }
+
+
+    public static int getDaysPerMonth(String month) {
+
+        return DaysPerMonth.valueOf(month.toUpperCase()).getDays();//daysPerMonth.get(month.toUpperCase());
     }
 }

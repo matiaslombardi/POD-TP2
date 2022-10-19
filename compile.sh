@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TP_PATH=`pwd`
+TP_PATH=$(pwd)
 cd $TP_PATH
 
 mvn clean install

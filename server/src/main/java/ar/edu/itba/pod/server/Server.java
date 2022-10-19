@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 
 public class Server {
-    private static Logger logger = LoggerFactory.getLogger(Server.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
     public static void main(String[] args) {
-        logger.info("tpe2-g6-parent Server Starting ...");
+        LOGGER.info("tpe2-g6-parent Server Starting ...");
 
         // Config
         Config config = new Config();
@@ -27,7 +27,7 @@ public class Server {
         JoinConfig joinConfig = new JoinConfig().setMulticastConfig(multicastConfig);
 
         InterfacesConfig interfacesConfig = new InterfacesConfig()
-                .setInterfaces(Collections.singletonList("127.0.0.*"))
+                .setInterfaces(Collections.singletonList("192.168.0.*"))
                 .setEnabled(true);
 
         NetworkConfig networkConfig = new NetworkConfig().setInterfaces(interfacesConfig).setJoin(joinConfig);

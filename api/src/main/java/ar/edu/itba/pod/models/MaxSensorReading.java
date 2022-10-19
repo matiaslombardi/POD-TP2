@@ -1,6 +1,12 @@
 package ar.edu.itba.pod.models;
 
-public class MaxSensorReading {
+import com.hazelcast.nio.ObjectDataInput;
+import com.hazelcast.nio.ObjectDataOutput;
+import com.hazelcast.nio.serialization.DataSerializable;
+
+import java.io.IOException;
+
+public class MaxSensorReading implements DataSerializable {
     private int year;
     private String month;
     private int mDate;
@@ -53,5 +59,23 @@ public class MaxSensorReading {
         this.month = reading.getMonth();
         this.mDate = reading.getmDate();
         this.time = reading.getTime();
+    }
+
+    @Override
+    public void writeData(ObjectDataOutput out) throws IOException {
+        out.writeLong(maxReading);
+        out.writeInt(time);
+        out.writeUTF(month);
+        out.writeInt(year);
+        out.writeInt(mDate);
+    }
+
+    @Override
+    public void readData(ObjectDataInput in) throws IOException {
+        this.maxReading = in.readLong();
+        this.time = in.readInt();
+        this.month = in.readUTF();
+        this.year = in.readInt();
+        this.mDate = in.readInt();
     }
 }

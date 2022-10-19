@@ -10,14 +10,14 @@ public class ReadingDateTypeMapper implements Mapper<Integer, Reading, Integer, 
 
     private transient HazelcastInstance hz;
     @Override
-    public void map(Integer key, Reading value, Context<Integer, DateTypeReading> context) {
-        if (value.getDay().toUpperCase().equals("SATURDAY") || value.getDay().toUpperCase().equals("SUNDAY")){
-            context.emit(value.getYear(), new DateTypeReading(value.getYear(), value.getHourlyCounts(), true));
-            System.out.println("Emitiendo: " + value.getYear() + " " + value.getHourlyCounts() + " " + true);
+    public void map(Integer key, Reading reading, Context<Integer, DateTypeReading> context) {
+        DateTypeReading value = new DateTypeReading(reading.getHourlyCounts(), false);
+        if (reading.getDay().equalsIgnoreCase("SATURDAY")
+                || reading.getDay().equalsIgnoreCase("SUNDAY")){
+            value.setWeekend(true);
         }
-        else
-            context.emit(value.getYear(), new DateTypeReading(value.getYear(), value.getHourlyCounts(), false));
 
+        context.emit(reading.getYear(), value);
     }
 
     @Override

@@ -1,23 +1,21 @@
 package ar.edu.itba.pod.models;
 
-public class DateTypeReading {
+import com.hazelcast.nio.ObjectDataInput;
+import com.hazelcast.nio.ObjectDataOutput;
+import com.hazelcast.nio.serialization.DataSerializable;
 
-    private int year;
+import java.io.IOException;
+
+public class DateTypeReading implements DataSerializable {
+
     private long hourlyCount;
     private boolean isWeekend;
 
-    public DateTypeReading(int year, long hourlyCount, boolean isWeekend) {
-        this.year = year;
+    public DateTypeReading() {}
+
+    public DateTypeReading(long hourlyCount, boolean isWeekend) {
         this.hourlyCount = hourlyCount;
         this.isWeekend = isWeekend;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
     }
 
     public long getHourlyCount() {
@@ -34,5 +32,17 @@ public class DateTypeReading {
 
     public void setWeekend(boolean weekend) {
         isWeekend = weekend;
+    }
+
+    @Override
+    public void writeData(ObjectDataOutput out) throws IOException {
+        out.writeLong(hourlyCount);
+        out.writeBoolean(isWeekend);
+    }
+
+    @Override
+    public void readData(ObjectDataInput in) throws IOException {
+        this.hourlyCount = in.readLong();
+        this.isWeekend = in.readBoolean();
     }
 }

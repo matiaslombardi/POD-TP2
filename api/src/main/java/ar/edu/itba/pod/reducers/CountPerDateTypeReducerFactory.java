@@ -24,12 +24,11 @@ public class CountPerDateTypeReducerFactory implements ReducerFactory<Integer, D
         public void reduce(DateTypeReading value) {
             if (value.isWeekend()) {
                 yearCountValues.sumWeekendCount(value.getHourlyCount());
-            }   
-            else{
+            } else {
                 yearCountValues.sumWeekdaysCount(value.getHourlyCount());
             }
         }
-        
+
         @Override
         public YearCountValues finalizeReduce() {
             return yearCountValues;

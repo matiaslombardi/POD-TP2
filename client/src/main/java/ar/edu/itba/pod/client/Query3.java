@@ -4,6 +4,7 @@ import ar.edu.itba.pod.mappers.MaxReadingMapper;
 import ar.edu.itba.pod.models.Constants;
 import ar.edu.itba.pod.models.MaxSensorReading;
 import ar.edu.itba.pod.models.Reading;
+import ar.edu.itba.pod.models.Utils;
 import ar.edu.itba.pod.reducers.MaxReadingReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
@@ -19,7 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Query3 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Query1.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Query3.class);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         LOGGER.info("tpe2-g6-parent Client Starting ...");
