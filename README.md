@@ -1,4 +1,4 @@
-# Programación de Objetos Distribuidos - TP1
+# Programación de Objetos Distribuidos - TP2
 
 ## Autores
 
@@ -41,14 +41,14 @@ Luego, ejecute:
 ```
 
 ### Server
-Para ejecutar el servidor, ubíquese en el directorio `tpe1-g6-server-1.0-SNAPSHOT` y ejecute:
+Para ejecutar el servidor, ubíquese en el directorio `tpe2-g6-server-1.0-SNAPSHOT` y ejecute:
 ```bash
 > run-server.sh
 ```
 Esto levantará una instancia de hazelcast
 
 ### Client
-Para ejecutar cualquiera de los clientes, ubíquese en el directorio `tpe1-g6-client-1.0-SNAPSHOT` y ejecute alguno de los scripts.
+Para ejecutar cualquiera de los clientes, ubíquese en el directorio `tpe2-g6-client-1.0-SNAPSHOT` y ejecute alguno de los scripts.
 Para todos se debe pasar como argumento `-DserverAddress=xx.xx.xx.xx:yyyy` donde `xx.xx.xx.xx` es la dirección IP del servidor y `yyyy` es el puerto en el que se ejecuta alguno de los nodos del cluster. Pueden indicarse varias IPs.
 
 #### Cliente de Administración de Vuelos
