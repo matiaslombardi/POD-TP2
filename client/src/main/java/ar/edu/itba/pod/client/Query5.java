@@ -12,6 +12,7 @@ import ar.edu.itba.pod.reducers.ReadingCountReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
@@ -38,11 +39,11 @@ public class Query5 {
         Utils.parseSensorsData("../../src/main/resources/data/sensors.csv", hz);
         //TODO: loggear -> fin lectura del archivo
 
-        IMap<Integer, Reading> rawReadings = hz.getMap(Constants.READINGS_MAP);
-        KeyValueSource<Integer, Reading> rawSource = KeyValueSource.fromMap(rawReadings);
+        IList<Reading> rawReadings = hz.getList(Constants.READINGS_MAP);
+        KeyValueSource<String, Reading> rawSource = KeyValueSource.fromList(rawReadings);
 
         JobTracker t = hz.getJobTracker("query-5-p1");
-        Job<Integer, Reading> countingJob = t.newJob(rawSource);
+        Job<String, Reading> countingJob = t.newJob(rawSource);
 
 
         ICompletableFuture<Map<String, Long>> futureCounted = countingJob.mapper(new ReadingNameMapper())
@@ -65,11 +66,9 @@ public class Query5 {
 
         Map<Long, List<Pair>> groupedResult = futureGrouped.get();
 
-        groupedResult.forEach((k, v) -> {
-            v.forEach(p ->
-                System.out.println(k + " " + p.getFirst() + " " + p.getSecond())
-            );
-        });
+        groupedResult.forEach((k, v) -> v.forEach(p ->
+            System.out.println(k + " " + p.getFirst() + " " + p.getSecond())
+        ));
 
         HazelcastClient.shutdownAll();
     }

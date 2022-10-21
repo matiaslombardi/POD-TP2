@@ -7,6 +7,7 @@ import ar.edu.itba.pod.reducers.TopAverageMonthReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
@@ -30,20 +31,17 @@ public class Query4 {
         Utils.parseReadings("../../src/main/resources/data/readings.csv", hz);
         Utils.parseSensorsData("../../src/main/resources/data/sensors.csv", hz);
 
-        IMap<Integer, Reading> readingIMap = hz.getMap(Constants.READINGS_MAP);
-        KeyValueSource<Integer, Reading> source = KeyValueSource.fromMap(readingIMap);
-        // TODO: capaz cambiar a lista
+        IList<Reading> readingIList = hz.getList(Constants.READINGS_MAP);
+        KeyValueSource<String, Reading> source = KeyValueSource.fromList(readingIList);
 
         JobTracker t = hz.getJobTracker("query-4");
-        Job<Integer, Reading> job = t.newJob(source);
+        Job<String, Reading> job = t.newJob(source);
 
         // TODO: chequear #nomenclatura y parsear year
         ICompletableFuture<List<TopSensorMonth>> future = job.mapper(
                 new TopAverageMonthMapper(2021))
                 .reducer(new TopAverageMonthReducerFactory())
                 .submit(new TopAverageMonthCollator(3));
-
-        //TODO: Ordenar por año descendente (con un collator)
 
         List<TopSensorMonth> result = future.get();
 

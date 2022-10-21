@@ -5,12 +5,12 @@ import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.opencsv.*;
 import com.opencsv.exceptions.CsvValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,13 +25,15 @@ public class Utils {
     public static void writeReadingCount(List<TotalReadingSensor> totalReadingSensors) {
         try {
             FileWriter fw = new FileWriter("query1-results.csv");
-            CSVWriter writer = new CSVWriter(fw, ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+            CSVWriter writer = new CSVWriter(fw, ';', CSVWriter.NO_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
             String[] header = {"Sensor", "Total_Count"};
             writer.writeNext(header);
 
             for (TotalReadingSensor totalReadingSensor : totalReadingSensors) {
-                String[] data = {totalReadingSensor.getSensor(), String.valueOf(totalReadingSensor.getTotal())};
+                String[] data = {totalReadingSensor.getSensor(),
+                        String.valueOf(totalReadingSensor.getTotal())};
                 writer.writeNext(data);
             }
 
@@ -41,23 +43,25 @@ public class Utils {
             throw new IllegalArgumentException("Error writing to file");
         }
     }
+
     public static void parseReadings(String fileName, HazelcastInstance hz) {
         // TODO: check
-        IMap<Integer, Reading> readings = hz.getMap(Constants.READINGS_MAP);
+        IList<Reading> readings = hz.getList(Constants.READINGS_MAP);
+        readings.clear();
+        //IMap<Integer, Reading> readings = hz.getMap(Constants.READINGS_MAP);
         try (FileReader fr = new FileReader(fileName); CSVReader reader = new CSVReaderBuilder(fr)
                 .withCSVParser(CSV_PARSER).build()) {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                readings.put(Integer.parseInt(nextLine[0]), // TODO: ver la clave
-                        new Reading(
-                                Integer.parseInt(nextLine[Constants.YEAR]),
-                                nextLine[Constants.MONTH],
-                                Integer.parseInt(nextLine[Constants.M_DATE]),
-                                nextLine[Constants.DAY],
-                                Integer.parseInt(nextLine[Constants.TIME]),
-                                Integer.parseInt(nextLine[Constants.READING_SENSOR_ID]),
-                                Long.parseLong(nextLine[Constants.HOURLY_COUNT])));
+                readings.add(new Reading(
+                        Integer.parseInt(nextLine[Constants.YEAR]),
+                        nextLine[Constants.MONTH],
+                        Integer.parseInt(nextLine[Constants.M_DATE]),
+                        nextLine[Constants.DAY],
+                        Integer.parseInt(nextLine[Constants.TIME]),
+                        Integer.parseInt(nextLine[Constants.READING_SENSOR_ID]),
+                        Long.parseLong(nextLine[Constants.HOURLY_COUNT])));
             }
         } catch (IOException | CsvValidationException e) {
             LOGGER.error(e.getMessage());
@@ -67,6 +71,7 @@ public class Utils {
 
     public static void parseSensorsData(String fileName, HazelcastInstance hz) {
         Map<Integer, Sensor> sensorMap = new HashMap<>();
+
         try (FileReader fr = new FileReader(fileName); CSVReader reader = new CSVReaderBuilder(fr)
                 .withCSVParser(CSV_PARSER).build()) {
             String[] nextLine;
@@ -84,7 +89,7 @@ public class Utils {
         }
 
         IMap<Integer, Sensor> sensors = hz.getMap(Constants.SENSORS_MAP);
-
+        sensors.clear();
         sensors.putAll(sensorMap);
     }
 
@@ -96,7 +101,7 @@ public class Utils {
 
         // TODO: agregar address parseada
         ClientNetworkConfig clientNetworkConfig = new ClientNetworkConfig();
-        String[] addresses = {"192.168.0.127:5701"};
+        String[] addresses = {"192.168.0.198:5701"};
         clientNetworkConfig.addAddress(addresses);
         config.setNetworkConfig(clientNetworkConfig);
 
@@ -105,7 +110,6 @@ public class Utils {
 
 
     public static int getDaysPerMonth(String month) {
-
         return DaysPerMonth.valueOf(month.toUpperCase()).getDays();//daysPerMonth.get(month.toUpperCase());
     }
 }

@@ -6,11 +6,9 @@ import com.hazelcast.core.HazelcastInstanceAware;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
-public class ReadingDateTypeMapper implements Mapper<Integer, Reading, Integer, DateTypeReading>, HazelcastInstanceAware {
-
-    private transient HazelcastInstance hz;
+public class ReadingDateTypeMapper implements Mapper<String, Reading, Integer, DateTypeReading> {
     @Override
-    public void map(Integer key, Reading reading, Context<Integer, DateTypeReading> context) {
+    public void map(String key, Reading reading, Context<Integer, DateTypeReading> context) {
         DateTypeReading value = new DateTypeReading(reading.getHourlyCounts(), false);
         if (reading.getDay().equalsIgnoreCase("SATURDAY")
                 || reading.getDay().equalsIgnoreCase("SUNDAY")){
@@ -18,10 +16,5 @@ public class ReadingDateTypeMapper implements Mapper<Integer, Reading, Integer, 
         }
 
         context.emit(reading.getYear(), value);
-    }
-
-    @Override
-    public void setHazelcastInstance(HazelcastInstance hz) {
-        this.hz = hz;
     }
 }

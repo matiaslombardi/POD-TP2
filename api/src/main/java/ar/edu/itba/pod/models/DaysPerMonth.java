@@ -14,7 +14,7 @@ public enum DaysPerMonth {
     NOVEMBER(30),
     DECEMBER(31);
 
-    private int days;
+    private final int days;
 
     DaysPerMonth(int days) {
         this.days = days;

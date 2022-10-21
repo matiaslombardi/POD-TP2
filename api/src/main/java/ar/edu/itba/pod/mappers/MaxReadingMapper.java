@@ -9,7 +9,7 @@ import com.hazelcast.core.HazelcastInstanceAware;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
-public class MaxReadingMapper implements Mapper<Integer, Reading, String, Reading>,
+public class MaxReadingMapper implements Mapper<String, Reading, String, Reading>,
         HazelcastInstanceAware {
 
     private transient HazelcastInstance hz;
@@ -24,7 +24,7 @@ public class MaxReadingMapper implements Mapper<Integer, Reading, String, Readin
     Es mejor acá pero capaz estaria bueno un key predicate para filtrar
      */
     @Override
-    public void map(Integer key, Reading value, Context<String, Reading> context) {
+    public void map(String key, Reading value, Context<String, Reading> context) {
         Sensor sensor = (Sensor) hz.getMap(Constants.SENSORS_MAP).get(value.getSensorId());
         if (sensor.getStatus().equals(Status.A) && value.getHourlyCounts() >= minValue)
             context.emit(sensor.getDescription(), value);

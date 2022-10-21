@@ -6,7 +6,7 @@ import com.hazelcast.core.HazelcastInstanceAware;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
-public class TopAverageMonthMapper implements Mapper<Integer, Reading, String, MonthReading>,
+public class TopAverageMonthMapper implements Mapper<String, Reading, String, MonthReading>,
         HazelcastInstanceAware {
 
     private transient HazelcastInstance hz;
@@ -18,7 +18,7 @@ public class TopAverageMonthMapper implements Mapper<Integer, Reading, String, M
     }
 
     @Override
-    public void map(Integer integer, Reading reading, Context<String, MonthReading> context) {
+    public void map(String key, Reading reading, Context<String, MonthReading> context) {
         Sensor sensor = (Sensor) hz.getMap(Constants.SENSORS_MAP).get(reading.getSensorId());
         // TODO capaz usar predicate
         if (sensor.getStatus().equals(Status.A) && reading.getYear() == this.year)

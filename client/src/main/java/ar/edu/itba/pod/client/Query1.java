@@ -10,6 +10,7 @@ import ar.edu.itba.pod.reducers.ReadingCountReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
@@ -32,15 +33,15 @@ public class Query1 {
         HazelcastInstance hz = Utils.getHazelcastInstance();
 
         //TODO: loggear -> inicio la lectura del archivo
-        Utils.parseReadings("../../src/main/resources/data/readings.csv", hz);
-        Utils.parseSensorsData("../../src/main/resources/data/sensors.csv", hz);
+        Utils.parseReadings("/Users/kazu/Documents/ITBA/POD/store-distribuido/readings.csv", hz);
+        Utils.parseSensorsData("/Users/kazu/Documents/ITBA/POD/store-distribuido/sensors.csv", hz);
         //TODO: loggear -> fin lectura del archivo
 
-        IMap<Integer, Reading> sensorIMap = hz.getMap(Constants.READINGS_MAP);
-        KeyValueSource<Integer, Reading> source = KeyValueSource.fromMap(sensorIMap);
+        IList<Reading> readingIList = hz.getList(Constants.READINGS_MAP);
+        KeyValueSource<String, Reading> source = KeyValueSource.fromList(readingIList);
 
         JobTracker t = hz.getJobTracker("query-1");
-        Job<Integer, Reading> job = t.newJob(source);
+        Job<String, Reading> job = t.newJob(source);
 
 
 

@@ -10,6 +10,7 @@ import ar.edu.itba.pod.reducers.CountPerDateTypeReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
@@ -32,11 +33,11 @@ public class Query2 {
         Utils.parseReadings("../../src/main/resources/data/readings.csv", hz);
         Utils.parseSensorsData("../../src/main/resources/data/sensors.csv", hz);
 
-        IMap<Integer, Reading> readingIMap = hz.getMap(Constants.READINGS_MAP);
-        KeyValueSource<Integer, Reading> source = KeyValueSource.fromMap(readingIMap);
+        IList<Reading> readingIList = hz.getList(Constants.READINGS_MAP);
+        KeyValueSource<String, Reading> source = KeyValueSource.fromList(readingIList);
 
         JobTracker t = hz.getJobTracker("query-2");
-        Job<Integer, Reading> job = t.newJob(source);
+        Job<String, Reading> job = t.newJob(source);
 
         ICompletableFuture<Map<Integer, YearCountValues>> future = job.mapper(new ReadingDateTypeMapper())
                 .reducer(new CountPerDateTypeReducerFactory())
