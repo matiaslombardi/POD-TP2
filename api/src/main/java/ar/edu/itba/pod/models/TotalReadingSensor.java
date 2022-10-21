@@ -39,7 +39,7 @@ public class TotalReadingSensor implements DataSerializable, Comparable<TotalRea
 
     @Override
     public int compareTo(TotalReadingSensor o) {
-        int toReturn = -Long.compare(o.total, total);
+        int toReturn = -Long.compare(total, o.total);
         if (toReturn == 0)
             toReturn = sensor.compareTo(o.sensor);
         return toReturn;

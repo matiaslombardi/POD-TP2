@@ -54,6 +54,7 @@ public class Query1 {
         result.forEach(value -> System.out.println(value.getSensor() + " " + value.getTotal()));
 
         // TODO: escribir a csv
+        Utils.writeReadingCount(result);
 
         HazelcastClient.shutdownAll();
     }
