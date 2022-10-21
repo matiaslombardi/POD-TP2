@@ -25,6 +25,7 @@ public class Query1 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Query1.class);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        // TODO capaz tener un solo main que en base a un parametro llama a las queries
         LOGGER.info("tpe2-g6-parent Client Starting ...");
 
         // TODO: parse address from args
@@ -51,6 +52,8 @@ public class Query1 {
 
 
         result.forEach(value -> System.out.println(value.getSensor() + " " + value.getTotal()));
+
+        // TODO: escribir a csv
 
         HazelcastClient.shutdownAll();
     }

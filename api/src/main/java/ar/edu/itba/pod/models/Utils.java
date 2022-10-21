@@ -76,6 +76,7 @@ public class Utils {
         GroupConfig groupConfig = new GroupConfig().setName("g6").setPassword("password");
         config.setGroupConfig(groupConfig);
 
+        // TODO: agregar address parseada
         ClientNetworkConfig clientNetworkConfig = new ClientNetworkConfig();
         String[] addresses = {"192.168.0.127:5701"};
         clientNetworkConfig.addAddress(addresses);
