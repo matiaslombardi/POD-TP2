@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.client;
 
+import ar.edu.itba.pod.collators.MaxReadingCollator;
 import ar.edu.itba.pod.mappers.MaxReadingMapper;
 import ar.edu.itba.pod.models.Constants;
 import ar.edu.itba.pod.models.MaxSensorReading;
@@ -39,7 +40,7 @@ public class Query3 {
 
         ICompletableFuture<Map<String, MaxSensorReading>> future = job.mapper(new MaxReadingMapper(700))
                 .reducer(new MaxReadingReducerFactory())
-                .submit();
+                .submit(new MaxReadingCollator());
 
         Map<String, MaxSensorReading> result = future.get();
         result.forEach((k, v) ->

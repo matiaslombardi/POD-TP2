@@ -20,6 +20,7 @@ public class TopAverageMonthMapper implements Mapper<Integer, Reading, String, M
     @Override
     public void map(Integer integer, Reading reading, Context<String, MonthReading> context) {
         Sensor sensor = (Sensor) hz.getMap(Constants.SENSORS_MAP).get(reading.getSensorId());
+        // TODO capaz usar predicate
         if (sensor.getStatus().equals(Status.A) && reading.getYear() == this.year)
             context.emit(sensor.getDescription(),
                     new MonthReading(reading.getMonth(), reading.getHourlyCounts()));

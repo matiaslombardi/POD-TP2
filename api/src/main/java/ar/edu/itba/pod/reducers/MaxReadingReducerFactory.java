@@ -22,7 +22,11 @@ public class MaxReadingReducerFactory implements ReducerFactory<String, Reading,
 
         @Override
         public void reduce(Reading value) {
-            if (value.getHourlyCounts() > maxReading.getMaxReading()) {
+            if (value.getHourlyCounts() == maxReading.getMaxReading()
+                    && (value.getYear() < maxReading.getYear())) { // TODO un metodo que se fije las fechas
+                maxReading.updateMax(value);
+            }
+            else if (value.getHourlyCounts() > maxReading.getMaxReading()) {
                 maxReading.updateMax(value);
             }
         }

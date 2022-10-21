@@ -20,7 +20,9 @@ public class MaxReadingMapper implements Mapper<Integer, Reading, String, Readin
         this.minValue = minValue;
     }
 
-    // TODO aca habria que filtrar por el minimo? o en el reducer?
+    /* TODO aca habria que filtrar por el minimo? o en el reducer?
+    Es mejor acá pero capaz estaria bueno un key predicate para filtrar
+     */
     @Override
     public void map(Integer key, Reading value, Context<String, Reading> context) {
         Sensor sensor = (Sensor) hz.getMap(Constants.SENSORS_MAP).get(value.getSensorId());

@@ -1,8 +1,10 @@
 package ar.edu.itba.pod.client;
 
+import ar.edu.itba.pod.collators.TotalReadingCollator;
 import ar.edu.itba.pod.mappers.ReadingNameMapper;
 import ar.edu.itba.pod.models.Constants;
 import ar.edu.itba.pod.models.Reading;
+import ar.edu.itba.pod.models.TotalReadingSensor;
 import ar.edu.itba.pod.models.Utils;
 import ar.edu.itba.pod.reducers.ReadingCountReducerFactory;
 import com.hazelcast.client.HazelcastClient;
@@ -15,6 +17,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -40,14 +43,14 @@ public class Query1 {
 
 
 
-        ICompletableFuture<Map<String, Long>> future = job.mapper(new ReadingNameMapper())
+        ICompletableFuture<List<TotalReadingSensor>> future = job.mapper(new ReadingNameMapper())
                 .reducer(new ReadingCountReducerFactory())
-                .submit();
+                .submit(new TotalReadingCollator());
 
-        Map<String, Long> result = future.get();
+        List<TotalReadingSensor> result = future.get();
 
 
-        result.forEach((k, v) -> System.out.println(k + " " + v));
+        result.forEach(value -> System.out.println(value.getSensor() + " " + value.getTotal()));
 
         HazelcastClient.shutdownAll();
     }

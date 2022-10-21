@@ -31,6 +31,10 @@ public class Sensor implements DataSerializable {
         return id;
     }
 
+    public boolean isActive() {
+        return status.equals(Status.A); // TODO: capaz status.isActive() es mejor
+    }
+
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
         out.writeInt(id);

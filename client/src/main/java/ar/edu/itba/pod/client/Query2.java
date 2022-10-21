@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.client;
 
+import ar.edu.itba.pod.collators.OrderByYearCollator;
 import ar.edu.itba.pod.mappers.ReadingDateTypeMapper;
 import ar.edu.itba.pod.models.Constants;
 import ar.edu.itba.pod.models.Reading;
@@ -39,9 +40,7 @@ public class Query2 {
 
         ICompletableFuture<Map<Integer, YearCountValues>> future = job.mapper(new ReadingDateTypeMapper())
                 .reducer(new CountPerDateTypeReducerFactory())
-                .submit();
-
-        //TODO: Ordenar por año descendente (con un collator)
+                .submit(new OrderByYearCollator());
 
         Map<Integer, YearCountValues> result = future.get();
         result.forEach((k, v) -> System.out.printf("%d,%d,%d,%d%n",

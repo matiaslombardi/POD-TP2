@@ -50,7 +50,7 @@ public class Query5 {
                 .submit();
 
         Map<String, Long> countedResult = futureCounted.get();
-        // TODO: poner en constante
+        // TODO: poner en constants el nombre de la coleccion
         IMap<String, Long> countedResultHz = hz.getMap("g6-count-sensors");
         countedResultHz.putAll(countedResult);
 
