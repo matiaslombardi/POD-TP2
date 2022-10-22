@@ -5,11 +5,11 @@ import com.hazelcast.mapreduce.Collator;
 import java.util.*;
 
 public class TotalReadingCollator implements Collator<Map.Entry<String, Long>,
-        List<TotalReadingSensor>> {
+        Collection<TotalReadingSensor>> {
 
     @Override
-    public List<TotalReadingSensor> collate(Iterable<Map.Entry<String, Long>> iterable) {
-        Set<TotalReadingSensor> sensors = new TreeSet<>();
+    public Collection<TotalReadingSensor> collate(Iterable<Map.Entry<String, Long>> iterable) {
+        Collection<TotalReadingSensor> sensors = new TreeSet<>();
         iterable.forEach(sensorEntry ->
                 sensors.add(new TotalReadingSensor(sensorEntry.getKey(), sensorEntry.getValue())));
 

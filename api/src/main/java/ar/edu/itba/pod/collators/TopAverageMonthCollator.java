@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TopAverageMonthCollator implements Collator<Map.Entry<String, Map<String, Double>>,
-        List<TopSensorMonth>> {
+        Collection<TopSensorMonth>> {
 
     private final int n;
 
@@ -16,8 +16,8 @@ public class TopAverageMonthCollator implements Collator<Map.Entry<String, Map<S
     }
 
     @Override
-    public List<TopSensorMonth> collate(Iterable<Map.Entry<String, Map<String, Double>>> iterable) {
-        Set<TopSensorMonth> topSensors = new TreeSet<>();
+    public Collection<TopSensorMonth> collate(Iterable<Map.Entry<String, Map<String, Double>>> iterable) {
+        Collection<TopSensorMonth> topSensors = new TreeSet<>();
         iterable.forEach(sensorEntry -> {
             String sensor = sensorEntry.getKey();
             Map.Entry<String, Double> maxValueMonth = sensorEntry.getValue().entrySet().stream().max(Map.Entry.comparingByValue())

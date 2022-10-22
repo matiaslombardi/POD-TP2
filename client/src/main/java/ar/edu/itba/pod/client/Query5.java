@@ -3,10 +3,9 @@ package ar.edu.itba.pod.client;
 import ar.edu.itba.pod.collators.MillionsPairCollator;
 import ar.edu.itba.pod.mappers.GroupingMillionsMapper;
 import ar.edu.itba.pod.mappers.ReadingNameMapper;
-import ar.edu.itba.pod.models.Constants;
-import ar.edu.itba.pod.models.Pair;
-import ar.edu.itba.pod.models.Reading;
-import ar.edu.itba.pod.models.Utils;
+import ar.edu.itba.pod.models.*;
+import ar.edu.itba.pod.models.hazelcast.Reading;
+import ar.edu.itba.pod.models.responses.MillionsPairResponse;
 import ar.edu.itba.pod.reducers.GroupingMillionsReducerFactory;
 import ar.edu.itba.pod.reducers.ReadingCountReducerFactory;
 import com.hazelcast.client.HazelcastClient;
@@ -20,7 +19,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -59,16 +58,19 @@ public class Query5 {
         Job<String, Long> groupingJob = t.newJob(countedSource);
 
         // TODO: agregar la parte de millones capaz en un predicate
-        ICompletableFuture<Map<Long, List<Pair>>> futureGrouped = groupingJob.mapper(
+        ICompletableFuture<Collection<MillionsPairResponse>> futureGrouped = groupingJob.mapper(
                         new GroupingMillionsMapper())
                 .reducer(new GroupingMillionsReducerFactory())
                 .submit(new MillionsPairCollator());
 
-        Map<Long, List<Pair>> groupedResult = futureGrouped.get();
+        Collection<MillionsPairResponse> groupedResult = futureGrouped.get();
 
+        /*
         groupedResult.forEach((k, v) -> v.forEach(p ->
             System.out.println(k + " " + p.getFirst() + " " + p.getSecond())
         ));
+
+         */
 
         HazelcastClient.shutdownAll();
     }

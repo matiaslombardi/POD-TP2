@@ -6,11 +6,15 @@ import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
 
-public class TotalReadingSensor implements DataSerializable, Comparable<TotalReadingSensor> {
+public class TotalReadingSensor implements DataSerializable, Comparable<TotalReadingSensor>,
+        CSVWriteable {
+
     private String sensor;
     private long total;
 
-    public TotalReadingSensor() {}
+
+    public TotalReadingSensor() {
+    }
 
     public TotalReadingSensor(String sensor, long total) {
         this.sensor = sensor;
@@ -43,5 +47,10 @@ public class TotalReadingSensor implements DataSerializable, Comparable<TotalRea
         if (toReturn == 0)
             toReturn = sensor.compareTo(o.sensor);
         return toReturn;
+    }
+
+    @Override
+    public String[] toCSVData() {
+        return new String[]{sensor, String.valueOf(total)};
     }
 }

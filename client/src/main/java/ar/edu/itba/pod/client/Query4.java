@@ -3,20 +3,19 @@ package ar.edu.itba.pod.client;
 import ar.edu.itba.pod.collators.TopAverageMonthCollator;
 import ar.edu.itba.pod.mappers.TopAverageMonthMapper;
 import ar.edu.itba.pod.models.*;
+import ar.edu.itba.pod.models.hazelcast.Reading;
 import ar.edu.itba.pod.reducers.TopAverageMonthReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.core.IList;
-import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 public class Query4 {
@@ -38,12 +37,12 @@ public class Query4 {
         Job<String, Reading> job = t.newJob(source);
 
         // TODO: chequear #nomenclatura y parsear year
-        ICompletableFuture<List<TopSensorMonth>> future = job.mapper(
+        ICompletableFuture<Collection<TopSensorMonth>> future = job.mapper(
                 new TopAverageMonthMapper(2021))
                 .reducer(new TopAverageMonthReducerFactory())
                 .submit(new TopAverageMonthCollator(3));
 
-        List<TopSensorMonth> result = future.get();
+        Collection<TopSensorMonth> result = future.get();
 
         result.forEach(v -> System.out.println(v.getSensor() + " " + v.getMonth() + " " + v.getAverage()));
 

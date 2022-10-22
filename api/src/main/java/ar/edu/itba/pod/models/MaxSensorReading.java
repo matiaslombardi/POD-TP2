@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.models;
 
+import ar.edu.itba.pod.models.hazelcast.Reading;
 import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
@@ -8,12 +9,22 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-public class MaxSensorReading implements DataSerializable, Comparable<MaxSensorReading> {
-    private int year;
+public class MaxSensorReading implements DataSerializable {
+    private int year; // TODO: capaz pasar todo a LocalDateTime
     private String month;
     private int mDate;
     private int time;
     private long maxReading;
+
+    public MaxSensorReading() {}
+
+    public MaxSensorReading(MaxSensorReading reading) {
+        this.year = reading.year;
+        this.month = reading.month;
+        this.mDate = reading.mDate;
+        this.time = reading.time;
+        this.maxReading = reading.getMaxReading();
+    }
 
     public int getYear() {
         return year;
@@ -88,10 +99,5 @@ public class MaxSensorReading implements DataSerializable, Comparable<MaxSensorR
         this.month = in.readUTF();
         this.year = in.readInt();
         this.mDate = in.readInt();
-    }
-
-    @Override
-    public int compareTo(MaxSensorReading o) {
-        return -Long.compare(maxReading, o.maxReading);
     }
 }

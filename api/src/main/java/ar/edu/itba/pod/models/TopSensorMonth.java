@@ -1,6 +1,6 @@
 package ar.edu.itba.pod.models;
 
-public class TopSensorMonth implements Comparable<TopSensorMonth> {
+public class TopSensorMonth implements Comparable<TopSensorMonth>, CSVWriteable {
     private String sensor;
     private String month;
     private double average;
@@ -31,5 +31,10 @@ public class TopSensorMonth implements Comparable<TopSensorMonth> {
         if (toReturn == 0)
             toReturn = sensor.compareTo(o.sensor);
         return toReturn;
+    }
+
+    @Override
+    public String[] toCSVData() {
+        return new String[]{sensor, month, String.valueOf(average)};
     }
 }

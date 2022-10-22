@@ -1,15 +1,16 @@
 package ar.edu.itba.pod.collators;
 
-import ar.edu.itba.pod.models.Pair;
+import ar.edu.itba.pod.models.responses.MillionsPairResponse;
 import com.hazelcast.mapreduce.Collator;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MillionsPairCollator implements Collator<Map.Entry<Long, List<String>>, Map<Long, List<Pair>>> {
+public class MillionsPairCollator implements Collator<Map.Entry<Long, List<String>>,
+        Collection<MillionsPairResponse>> {
     @Override
-    public Map<Long, List<Pair>> collate(Iterable<Map.Entry<Long, List<String>>> iterable) {
-        Map<Long, List<Pair>> toReturn = new HashMap<>();
+    public Collection<MillionsPairResponse> collate(Iterable<Map.Entry<Long, List<String>>> iterable) {
+        Collection<MillionsPairResponse> toReturn = new TreeSet<>();
 
         iterable.forEach(entry -> {
             if (entry.getValue().size() < 2)
@@ -18,13 +19,10 @@ public class MillionsPairCollator implements Collator<Map.Entry<Long, List<Strin
             Long key = entry.getKey();
             List<String> values = entry.getValue().stream().sorted().collect(Collectors.toList());
 
-            List<Pair> pairValues = new ArrayList<>();
             for (int i = 0; i < values.size(); i++) {
                 for (int j = i + 1; j < values.size(); j++)
-                    pairValues.add(new Pair(values.get(i), values.get(j)));
+                    toReturn.add(new MillionsPairResponse(key, values.get(i), values.get(j)));
             }
-
-            toReturn.put(key, pairValues);
         });
 
         return toReturn;

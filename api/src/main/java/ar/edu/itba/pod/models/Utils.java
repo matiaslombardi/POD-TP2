@@ -1,5 +1,8 @@
 package ar.edu.itba.pod.models;
 
+import ar.edu.itba.pod.models.hazelcast.Reading;
+import ar.edu.itba.pod.models.hazelcast.Sensor;
+import ar.edu.itba.pod.models.hazelcast.Status;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;

@@ -11,6 +11,11 @@ public class YearCountValues implements DataSerializable {
 
     public YearCountValues() {}
 
+    public YearCountValues(YearCountValues yearCountValues) {
+        weekdaysCount = yearCountValues.weekdaysCount;
+        weekendCount = yearCountValues.weekendCount;
+    }
+
     public long getWeekendCount() {
         return weekendCount;
     }

@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.client;
 
-import ar.edu.itba.pod.models.MaxSensorReading;
+import ar.edu.itba.pod.models.CSVWriteable;
+import ar.edu.itba.pod.models.responses.MaxSensorResponse;
 import ar.edu.itba.pod.models.TotalReadingSensor;
 import ar.edu.itba.pod.models.YearCountValues;
 import com.opencsv.CSVWriter;
@@ -9,13 +10,31 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 public class QueryResponseWriter {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryResponseWriter.class);
-    public static void writeReadingCount(List<TotalReadingSensor> totalReadingSensors) {
+
+    public static void writeQueryResponse(String filename, Collection<? extends CSVWriteable> results,
+                                          String[] header) {
+        try {
+            FileWriter fw = new FileWriter(filename);
+            CSVWriter writer = new CSVWriter(fw, ';', CSVWriter.NO_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+
+            writer.writeNext(header);
+            for (CSVWriteable result : results) {
+                writer.writeNext(result.toCSVData());
+            }
+            writer.close();
+        } catch (IOException e) {
+            LOGGER.error("Error writing results to file", e);
+        }
+    }
+
+    public static void writeReadingCount(Iterable<TotalReadingSensor> totalReadingSensors) {
         try {
             FileWriter fw = new FileWriter("query1.csv");
             CSVWriter writer = new CSVWriter(fw, ';', CSVWriter.NO_QUOTE_CHARACTER,
@@ -64,7 +83,7 @@ public class QueryResponseWriter {
         }
     }
 
-    public static void writeMaxSensorReading(List<Map.Entry<String, MaxSensorReading>> maxSensorReadings) {
+    public static void writeMaxSensorReading(Collection<MaxSensorResponse> maxSensorReadings) {
         try {
             FileWriter fw = new FileWriter("query3.csv");
             CSVWriter writer = new CSVWriter(fw, ';', CSVWriter.NO_QUOTE_CHARACTER,
@@ -73,10 +92,10 @@ public class QueryResponseWriter {
             String[] header = {"Sensor", "Max_Reading_Count", "Max_Reading_DateTime"};
             writer.writeNext(header);
 
-            for (Map.Entry<String, MaxSensorReading> reading : maxSensorReadings) {
-                String[] data = {reading.getKey(),
-                        String.valueOf(reading.getValue().getMaxReading()),
-                        reading.getValue().formatDate()
+            for (MaxSensorResponse reading : maxSensorReadings) {
+                String[] data = {reading.getSensor(),
+                        String.valueOf(reading.getMaxReading()),
+                        reading.formatDate()
                 };
                 writer.writeNext(data);
             }

@@ -1,8 +1,7 @@
 package ar.edu.itba.pod.mappers;
 
 import ar.edu.itba.pod.models.*;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.HazelcastInstanceAware;
+import ar.edu.itba.pod.models.hazelcast.Reading;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 

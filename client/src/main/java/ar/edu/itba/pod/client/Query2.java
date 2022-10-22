@@ -2,10 +2,9 @@ package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.collators.OrderByYearCollator;
 import ar.edu.itba.pod.mappers.ReadingDateTypeMapper;
-import ar.edu.itba.pod.models.Constants;
-import ar.edu.itba.pod.models.Reading;
-import ar.edu.itba.pod.models.Utils;
-import ar.edu.itba.pod.models.YearCountValues;
+import ar.edu.itba.pod.models.*;
+import ar.edu.itba.pod.models.hazelcast.Reading;
+import ar.edu.itba.pod.models.responses.YearCountResponse;
 import ar.edu.itba.pod.reducers.CountPerDateTypeReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
@@ -17,7 +16,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 public class Query2 {
@@ -38,15 +37,15 @@ public class Query2 {
         JobTracker t = hz.getJobTracker("query-2");
         Job<String, Reading> job = t.newJob(source);
 
-        ICompletableFuture<Map<Integer, YearCountValues>> future = job.mapper(new ReadingDateTypeMapper())
+        ICompletableFuture<Collection<YearCountResponse>> future = job.mapper(new ReadingDateTypeMapper())
                 .reducer(new CountPerDateTypeReducerFactory())
                 .submit(new OrderByYearCollator());
 
-        Map<Integer, YearCountValues> result = future.get();
-        result.forEach((k, v) -> System.out.printf("%d,%d,%d,%d%n",
-                k, v.getWeekdaysCount(), v.getWeekendCount(), v.getWeekdaysCount() + v.getWeekendCount()));
+        Collection<YearCountResponse> result = future.get();
+        result.forEach((response) -> System.out.printf("%d,%d,%d,%d%n",
+                response.getYear(), response.getWeekdaysCount(), response.getWeekendCount(), response.getWeekdaysCount() + response.getWeekendCount()));
 
-        QueryResponseWriter.writeTotalCountPerYear(result);
+//        QueryResponseWriter.writeTotalCountPerYear(result);
         HazelcastClient.shutdownAll();
     }
 }

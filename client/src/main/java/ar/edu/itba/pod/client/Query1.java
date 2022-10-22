@@ -3,7 +3,7 @@ package ar.edu.itba.pod.client;
 import ar.edu.itba.pod.collators.TotalReadingCollator;
 import ar.edu.itba.pod.mappers.ReadingNameMapper;
 import ar.edu.itba.pod.models.Constants;
-import ar.edu.itba.pod.models.Reading;
+import ar.edu.itba.pod.models.hazelcast.Reading;
 import ar.edu.itba.pod.models.TotalReadingSensor;
 import ar.edu.itba.pod.models.Utils;
 import ar.edu.itba.pod.reducers.ReadingCountReducerFactory;
@@ -17,7 +17,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 public class Query1 {
@@ -43,16 +43,17 @@ public class Query1 {
 
 
 
-        ICompletableFuture<List<TotalReadingSensor>> future = job.mapper(new ReadingNameMapper())
+        ICompletableFuture<Collection<TotalReadingSensor>> future = job.mapper(new ReadingNameMapper())
                 .reducer(new ReadingCountReducerFactory())
                 .submit(new TotalReadingCollator());
 
-        List<TotalReadingSensor> result = future.get();
+        Collection<TotalReadingSensor> result = future.get();
 
 
         result.forEach(value -> System.out.println(value.getSensor() + " " + value.getTotal()));
 
-        QueryResponseWriter.writeReadingCount(result);
+        // TODO: poner el generico
+        QueryResponseWriter.writeQueryResponse("query1.csv", result, new String[] {"Sensor", "Total_Count"});
 
         HazelcastClient.shutdownAll();
     }
