@@ -18,6 +18,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -39,15 +40,17 @@ public class Query3 {
         JobTracker t = hz.getJobTracker("query-3");
         Job<String, Reading> job = t.newJob(source);
 
-        ICompletableFuture<Map<String, MaxSensorReading>> future = job.mapper(new MaxReadingMapper(700))
+        ICompletableFuture<List<Map.Entry<String, MaxSensorReading>>> future = job.mapper(new MaxReadingMapper(700))
                 .reducer(new MaxReadingReducerFactory())
                 .submit(new MaxReadingCollator());
 
-        Map<String, MaxSensorReading> result = future.get();
-        result.forEach((k, v) ->
+        List<Map.Entry<String, MaxSensorReading>> result = future.get();
+        result.forEach((entry) ->
                 System.out.printf("%s %d %d/%s/%d %s%n",
-                    k, v.getMaxReading(), v.getmDate(), v.getMonth(), v.getYear(), v.getTime())
+                    entry.getKey(), entry.getValue().getMaxReading(), entry.getValue().getmDate(), entry.getValue().getMonth(), entry.getValue().getYear(), entry.getValue().getTime())
         );
+
+        QueryResponseWriter.writeMaxSensorReading(result);
 
         HazelcastClient.shutdownAll();
     }

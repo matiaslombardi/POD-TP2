@@ -31,8 +31,8 @@ public class Query1 {
         HazelcastInstance hz = Utils.getHazelcastInstance();
 
         //TODO: loggear -> inicio la lectura del archivo
-        Utils.parseReadings("/Users/kazu/Documents/ITBA/POD/store-distribuido/readings.csv", hz);
-        Utils.parseSensorsData("/Users/kazu/Documents/ITBA/POD/store-distribuido/sensors.csv", hz);
+        Utils.parseReadings("../../src/main/resources/data/readings.csv", hz);
+        Utils.parseSensorsData("../../src/main/resources/data/sensors.csv", hz);
         //TODO: loggear -> fin lectura del archivo
 
         IList<Reading> readingIList = hz.getList(Constants.READINGS_MAP);

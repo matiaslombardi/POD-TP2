@@ -22,8 +22,9 @@ public class MaxReadingReducerFactory implements ReducerFactory<String, Reading,
 
         @Override
         public void reduce(Reading value) {
+            // TODO chequear comparacion de fechas
             if (value.getHourlyCounts() == maxReading.getMaxReading()
-                    && (value.getYear() < maxReading.getYear())) { // TODO un metodo que se fije las fechas
+                    && maxReading.isAfter(value.getYear(), value.getMonth(), value.getmDate(), value.getTime())) {
                 maxReading.updateMax(value);
             }
             else if (value.getHourlyCounts() > maxReading.getMaxReading()) {

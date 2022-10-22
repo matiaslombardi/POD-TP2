@@ -5,8 +5,10 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.Month;
 
-public class MaxSensorReading implements DataSerializable {
+public class MaxSensorReading implements DataSerializable, Comparable<MaxSensorReading> {
     private int year;
     private String month;
     private int mDate;
@@ -53,12 +55,21 @@ public class MaxSensorReading implements DataSerializable {
         this.maxReading = maxReading;
     }
 
+    public boolean isAfter(int year, String month, int mDate, int time) {
+        return LocalDateTime.of(year, LocalDateTime.parse(month).getMonthValue(), mDate, time, 0)
+                .isAfter(LocalDateTime.of(this.year, LocalDateTime.parse(this.month).getMonthValue(), this.mDate, this.time, 0));
+    }
+
     public void updateMax(Reading reading) {
         this.maxReading = reading.getHourlyCounts();
         this.year = reading.getYear();
         this.month = reading.getMonth();
         this.mDate = reading.getmDate();
         this.time = reading.getTime();
+    }
+
+    public String formatDate() {
+        return String.format("%d/%s/%d %d:00", mDate, Month.valueOf(month.toUpperCase()).getValue(), year, time);
     }
 
     @Override
@@ -77,5 +88,10 @@ public class MaxSensorReading implements DataSerializable {
         this.month = in.readUTF();
         this.year = in.readInt();
         this.mDate = in.readInt();
+    }
+
+    @Override
+    public int compareTo(MaxSensorReading o) {
+        return -Long.compare(maxReading, o.maxReading);
     }
 }

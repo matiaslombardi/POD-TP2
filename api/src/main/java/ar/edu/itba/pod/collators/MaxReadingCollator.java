@@ -1,21 +1,21 @@
 package ar.edu.itba.pod.collators;
 
+import ar.edu.itba.pod.models.MaxReadingComparator;
 import ar.edu.itba.pod.models.MaxSensorReading;
 import com.hazelcast.mapreduce.Collator;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MaxReadingCollator implements Collator<Map.Entry<String, MaxSensorReading>,
-        Map<String, MaxSensorReading>> {
+        List<Map.Entry<String, MaxSensorReading>>> {
 
     @Override
-    public Map<String, MaxSensorReading> collate(Iterable<Map.Entry<String, MaxSensorReading>> iterable) {
-        // TODO ver como sortear value y despues key o usar otra clase
+    public List<Map.Entry<String, MaxSensorReading>> collate(Iterable<Map.Entry<String, MaxSensorReading>> iterable) {
+        // TODO chequear si esta bien hacer una lista de entries
+        Set<Map.Entry<String, MaxSensorReading>> maxReadingsSet = new TreeSet<>(new MaxReadingComparator<>());
+        iterable.forEach(maxReadingsSet::add);
 
-        Map<String, MaxSensorReading> maxReadings = new HashMap<>();
-        iterable.forEach(entry -> maxReadings.put(entry.getKey(), entry.getValue()));
-        return maxReadings;
+        return new ArrayList<>(maxReadingsSet);
     }
 }
 
