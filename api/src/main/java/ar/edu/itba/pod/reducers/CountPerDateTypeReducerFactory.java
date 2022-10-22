@@ -17,7 +17,7 @@ public class CountPerDateTypeReducerFactory implements ReducerFactory<Integer, D
 
         @Override
         public void beginReduce() {
-            yearCountValues = new YearCountValues(yearCountValues);
+            yearCountValues = new YearCountValues();
         }
 
         @Override

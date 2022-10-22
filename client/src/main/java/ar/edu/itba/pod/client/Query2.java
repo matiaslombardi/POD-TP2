@@ -28,8 +28,9 @@ public class Query2 {
         // TODO: parse address from args
         HazelcastInstance hz = Utils.getHazelcastInstance();
 
-        Utils.parseReadings("../../src/main/resources/data/readings.csv", hz);
-        Utils.parseSensorsData("../../src/main/resources/data/sensors.csv", hz);
+
+        Utils.parseReadings("/Users/kazu/Documents/ITBA/POD/store-distribuido", hz);
+        Utils.parseSensorsData("/Users/kazu/Documents/ITBA/POD/store-distribuido", hz);
 
         IList<Reading> readingIList = hz.getList(Constants.READINGS_MAP);
         KeyValueSource<String, Reading> source = KeyValueSource.fromList(readingIList);

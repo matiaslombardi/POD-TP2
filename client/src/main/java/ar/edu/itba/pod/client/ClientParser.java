@@ -9,7 +9,7 @@ public class ClientParser {
 
     private final Logger LOGGER = LoggerFactory.getLogger(ClientParser.class);
 
-    private static final String QUERY = "QUERY";
+    private static final String QUERY = "query";
     private static final String ADDRESSES = "addresses";
     private static final String IN_PATH = "inPath";
     private static final String OUT_PATH = "outPath";
@@ -26,21 +26,28 @@ public class ClientParser {
     private int year;
 
     public void parse() {
+        // TODO: parsear
+        Properties properties = System.getProperties();
 
-        Properties properties = new Properties();
+        System.out.println(properties); // no se si tiene toString bien
+        System.out.println(properties.getProperty(QUERY));
 
         query = Integer.parseInt(properties.getProperty(QUERY));
 
+        /*
         if (properties.getProperty(ADDRESSES) == null) {
             addresses = properties.getProperty(ADDRESSES).split(";");
             LOGGER.error("No addresses provided");
             System.exit(1);
         }
 
+         */
+
         if ((inPath = properties.getProperty(IN_PATH)) == null) {
             LOGGER.error("No inPath provided");
             System.exit(1);
         }
+
 
         if ((outPath = properties.getProperty(OUT_PATH)) == null) {
             LOGGER.error("No outPath provided");

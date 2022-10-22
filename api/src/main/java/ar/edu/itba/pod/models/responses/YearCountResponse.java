@@ -39,7 +39,7 @@ public class YearCountResponse extends YearCountValues implements DataSerializab
 
     @Override
     public int compareTo(YearCountResponse o) {
-        return o.getYear() - year;
+        return -Integer.compare(year, o.getYear());
     }
 
     @Override

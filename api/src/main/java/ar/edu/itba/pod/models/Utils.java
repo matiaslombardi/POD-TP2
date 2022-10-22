@@ -14,6 +14,7 @@ import com.opencsv.*;
 import com.opencsv.exceptions.CsvValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,7 +30,8 @@ public class Utils {
         IList<Reading> readings = hz.getList(Constants.READINGS_MAP);
         readings.clear();
         //IMap<Integer, Reading> readings = hz.getMap(Constants.READINGS_MAP);
-        try (FileReader fr = new FileReader(fileName); CSVReader reader = new CSVReaderBuilder(fr)
+        // TODO: a CONSTANTS
+        try (FileReader fr = new FileReader(fileName + "/readings.csv"); CSVReader reader = new CSVReaderBuilder(fr)
                 .withCSVParser(CSV_PARSER).build()) {
             String[] nextLine;
             reader.readNext();
@@ -51,9 +53,9 @@ public class Utils {
 
     public static void parseSensorsData(String fileName, HazelcastInstance hz) {
         Map<Integer, Sensor> sensorMap = new HashMap<>();
-
-        try (FileReader fr = new FileReader(fileName); CSVReader reader = new CSVReaderBuilder(fr)
-                .withCSVParser(CSV_PARSER).build()) {
+        // TODO: a CONSTANTS
+        try (FileReader fr = new FileReader(fileName + "/sensors.csv");
+             CSVReader reader = new CSVReaderBuilder(fr).withCSVParser(CSV_PARSER).build()) {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
