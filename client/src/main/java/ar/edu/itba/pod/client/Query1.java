@@ -11,7 +11,6 @@ import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.core.IList;
-import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
@@ -19,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Query1 {
@@ -54,8 +52,7 @@ public class Query1 {
 
         result.forEach(value -> System.out.println(value.getSensor() + " " + value.getTotal()));
 
-        // TODO: escribir a csv
-        Utils.writeReadingCount(result);
+        QueryResponseWriter.writeReadingCount(result);
 
         HazelcastClient.shutdownAll();
     }
