@@ -11,8 +11,7 @@ public class ReadingCountReducerFactory implements ReducerFactory<String, Long, 
     }
 
     private static class ReadingCountReducer extends Reducer<Long, Long> {
-        private long count; //TODO: Volatile???
-
+        private long count;
         @Override
         public void beginReduce() {
             count = 0;

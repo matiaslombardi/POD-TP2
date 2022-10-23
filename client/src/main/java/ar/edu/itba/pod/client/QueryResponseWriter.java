@@ -25,9 +25,7 @@ public class QueryResponseWriter {
                     CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
             writer.writeNext(header);
-            for (CSVWriteable result : results) {
-                writer.writeNext(result.toCSVData());
-            }
+            results.forEach(r -> writer.writeNext(r.toCSVData()));
             writer.close();
         } catch (IOException e) {
             LOGGER.error("Error writing results to file", e);

@@ -13,7 +13,6 @@ public class TotalReadingCollator implements Collator<Map.Entry<String, Long>,
         iterable.forEach(sensorEntry ->
                 sensors.add(new TotalReadingSensor(sensorEntry.getKey(), sensorEntry.getValue())));
 
-        // TODO: capaz retornar Collection y listo
-        return new ArrayList<>(sensors);
+        return sensors;
     }
 }

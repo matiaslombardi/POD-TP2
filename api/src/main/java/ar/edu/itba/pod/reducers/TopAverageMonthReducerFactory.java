@@ -35,7 +35,7 @@ public class TopAverageMonthReducerFactory implements ReducerFactory<String, Mon
         @Override
         public Map<String, Double> finalizeReduce() {
             for (Map.Entry<String, Double> entry : averagePerMonth.entrySet()) {
-                int days = Utils.getDaysPerMonth(entry.getKey()); // TODO: obtener dias y ver como era con streams
+                int days = Utils.getDaysPerMonth(entry.getKey());
                 entry.setValue(Math.floor(entry.getValue() * 100 / days) / 100);
             }
 

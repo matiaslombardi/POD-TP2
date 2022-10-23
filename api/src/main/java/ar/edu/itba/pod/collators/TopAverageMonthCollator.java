@@ -20,13 +20,15 @@ public class TopAverageMonthCollator implements Collator<Map.Entry<String, Map<S
         Collection<TopSensorMonth> topSensors = new TreeSet<>();
         iterable.forEach(sensorEntry -> {
             String sensor = sensorEntry.getKey();
-            Map.Entry<String, Double> maxValueMonth = sensorEntry.getValue().entrySet().stream().max(Map.Entry.comparingByValue())
+            Map.Entry<String, Double> maxValueMonth = sensorEntry.getValue().entrySet().stream()
+                    .max(Map.Entry.comparingByValue())
                     .orElseThrow(RuntimeException::new);
 
-            topSensors.add(new TopSensorMonth(sensor, maxValueMonth.getKey(), maxValueMonth.getValue()));
+            topSensors.add(new TopSensorMonth(sensor, maxValueMonth.getKey(),
+                    maxValueMonth.getValue()));
         });
 
-        // TODO: check sorted
+        // TODO: PROBAR CON CSV NUESTRO
         return topSensors.stream().limit(n).collect(Collectors.toList());
     }
 }

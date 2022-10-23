@@ -26,22 +26,18 @@ public class ClientParser {
     private int year;
 
     public void parse() {
-        // TODO: parsear
         Properties properties = System.getProperties();
-
-        System.out.println(properties); // no se si tiene toString bien
-        System.out.println(properties.getProperty(QUERY));
 
         query = Integer.parseInt(properties.getProperty(QUERY));
 
-        /*
+        // TODO: parsear
+
         if (properties.getProperty(ADDRESSES) == null) {
             addresses = properties.getProperty(ADDRESSES).split(";");
             LOGGER.error("No addresses provided");
             System.exit(1);
         }
 
-         */
 
         if ((inPath = properties.getProperty(IN_PATH)) == null) {
             LOGGER.error("No inPath provided");

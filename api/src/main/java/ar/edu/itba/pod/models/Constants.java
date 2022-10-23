@@ -4,6 +4,12 @@ public class Constants {
     public final static String SENSORS_MAP = "g6_sensors";
     public final static String READINGS_MAP = "g6_readings";
 
+    public final static String SENSORS_COUNT_MAP = "g6_count_sensors";
+
+    public final static String READINGS_FILE = "/readings.csv";
+
+    public final static String SENSORS_FILE = "/sensors.csv";
+
 
     public final static int SENSOR_ID = 0;
     public final static int SENSOR_DESCRIPTION = 1;

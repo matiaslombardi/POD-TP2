@@ -17,26 +17,26 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Utils {
+
+    //TODO: manejo de errores
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
     private static final ICSVParser CSV_PARSER = new CSVParserBuilder().withSeparator(';').build();
 
-
-    public static void parseReadings(String fileName, HazelcastInstance hz) {
-        // TODO: check
-        IList<Reading> readings = hz.getList(Constants.READINGS_MAP);
-        readings.clear();
-        //IMap<Integer, Reading> readings = hz.getMap(Constants.READINGS_MAP);
-        // TODO: a CONSTANTS
-        try (FileReader fr = new FileReader(fileName + "/readings.csv"); CSVReader reader = new CSVReaderBuilder(fr)
+    public static void parseReadings(String filePath, HazelcastInstance hz) {
+        List<Reading> aux = new ArrayList<>();
+        try (FileReader fr = new FileReader(filePath + Constants.READINGS_FILE);
+             CSVReader reader = new CSVReaderBuilder(fr)
                 .withCSVParser(CSV_PARSER).build()) {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                readings.add(new Reading(
+                aux.add(new Reading(
                         Integer.parseInt(nextLine[Constants.YEAR]),
                         nextLine[Constants.MONTH],
                         Integer.parseInt(nextLine[Constants.M_DATE]),
@@ -49,12 +49,14 @@ public class Utils {
             LOGGER.error(e.getMessage());
             throw new IllegalArgumentException("Error reading CSV");
         }
+        IList<Reading> readings = hz.getList(Constants.READINGS_MAP);
+        readings.clear();
+        readings.addAll(aux);
     }
 
     public static void parseSensorsData(String fileName, HazelcastInstance hz) {
         Map<Integer, Sensor> sensorMap = new HashMap<>();
-        // TODO: a CONSTANTS
-        try (FileReader fr = new FileReader(fileName + "/sensors.csv");
+        try (FileReader fr = new FileReader(fileName + Constants.SENSORS_FILE);
              CSVReader reader = new CSVReaderBuilder(fr).withCSVParser(CSV_PARSER).build()) {
             String[] nextLine;
             reader.readNext();
@@ -78,12 +80,12 @@ public class Utils {
     public static HazelcastInstance getHazelcastInstance() {
         ClientConfig config = new ClientConfig();
 
-        GroupConfig groupConfig = new GroupConfig().setName("g6").setPassword("password");
+        GroupConfig groupConfig = new GroupConfig().setName("g6").setPassword("g6-pass");
         config.setGroupConfig(groupConfig);
 
         // TODO: agregar address parseada
         ClientNetworkConfig clientNetworkConfig = new ClientNetworkConfig();
-        String[] addresses = {"192.168.0.198:5701"};
+        String[] addresses = {"192.168.0.127:5701"};
         clientNetworkConfig.addAddress(addresses);
         config.setNetworkConfig(clientNetworkConfig);
 

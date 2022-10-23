@@ -32,7 +32,7 @@ public class Sensor implements DataSerializable {
     }
 
     public boolean isActive() {
-        return status.equals(Status.A); // TODO: capaz status.isActive() es mejor
+        return status.equals(Status.A);
     }
 
     @Override

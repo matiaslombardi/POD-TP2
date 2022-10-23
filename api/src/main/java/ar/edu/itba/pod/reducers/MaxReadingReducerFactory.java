@@ -5,7 +5,6 @@ import ar.edu.itba.pod.models.hazelcast.Reading;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-// TODO: ver de poner otras clases auxiliares
 public class MaxReadingReducerFactory implements ReducerFactory<String, Reading, MaxSensorReading> {
     @Override
     public Reducer<Reading, MaxSensorReading> newReducer(String s) {
