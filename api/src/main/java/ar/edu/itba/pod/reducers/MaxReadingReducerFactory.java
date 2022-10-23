@@ -21,8 +21,6 @@ public class MaxReadingReducerFactory implements ReducerFactory<String, MaxSenso
 
         @Override
         public void reduce(MaxSensorReading value) {
-            // TODO chequear comparacion de fechas -> Tira error cuando quiere levanter el month
-
             if (value.getMaxReading() == maxReading.getMaxReading() &&
                     value.isAfter(maxReading.getDate())) {
                 maxReading.updateMax(value);

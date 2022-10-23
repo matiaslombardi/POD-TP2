@@ -18,6 +18,7 @@ public class Reading implements DataSerializable {
     public Reading() {
     }
 
+
     public Reading(int year, String month, int mDate, String day, int time, int sensorId, long hourlyCounts) {
         this.sensorId = sensorId;
         this.year = year;

@@ -77,15 +77,12 @@ public class Utils {
         sensors.putAll(sensorMap);
     }
 
-    public static HazelcastInstance getHazelcastInstance() {
+    public static HazelcastInstance getHazelcastInstance(String[] addresses) {
         ClientConfig config = new ClientConfig();
 
         GroupConfig groupConfig = new GroupConfig().setName("g6").setPassword("g6-pass");
         config.setGroupConfig(groupConfig);
-
-        // TODO: agregar address parseada
         ClientNetworkConfig clientNetworkConfig = new ClientNetworkConfig();
-        String[] addresses = {"192.168.0.127:5701"};
         clientNetworkConfig.addAddress(addresses);
         config.setNetworkConfig(clientNetworkConfig);
 

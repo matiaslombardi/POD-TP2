@@ -6,10 +6,13 @@ import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MaxSensorReading implements DataSerializable {
     private long maxReading;
     private LocalDateTime date;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:00");
+
 
     public MaxSensorReading() {
     }
@@ -48,10 +51,6 @@ public class MaxSensorReading implements DataSerializable {
 
     public boolean isAfter(LocalDateTime toCompare) {
         return date.isAfter(toCompare);
-//        return LocalDateTime.of(year, LocalDateTime.parse(month).getMonthValue(), mDate, time, 0)
-//                .isAfter(LocalDateTime.of(this.year, LocalDateTime.parse(this.month).getMonthValue(), this.mDate, this.time, 0));
-//
-//    }
     }
 
     public void updateMax(MaxSensorReading reading) {
@@ -60,8 +59,7 @@ public class MaxSensorReading implements DataSerializable {
     }
 
     public String formatDate() {
-        return date.toString();
-        //return String.format("%d/%s/%d %d:00", mDate, Month.valueOf(month.toUpperCase()).getValue(), year, time);
+        return date.format(formatter);
     }
 
     @Override

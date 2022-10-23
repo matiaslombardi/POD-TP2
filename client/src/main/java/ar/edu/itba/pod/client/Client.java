@@ -24,18 +24,19 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
 
     // TODO: falta hacer un combiner
-    // TODO: fijarse ints y longs
 
     public static void main(String[] args) {
         LOGGER.info("tpe2-g6-parent Client Starting ...");
@@ -43,20 +44,19 @@ public class Client {
         ClientParser parser = new ClientParser();
         parser.parse();
 
-        HazelcastInstance hz = Utils.getHazelcastInstance();
+        HazelcastInstance hz = Utils.getHazelcastInstance(parser.getAddresses());
 
         try (FileWriter fw = new FileWriter("time" + parser.getQuery() + ".txt", false)) {
-            // TODO: formato del LocalDate
-            fw.write(LocalDateTime.now() + " - Inicio de lectura del archivo\n");
+            fw.write(LocalDateTime.now().format(FORMATTER) + " - Inicio de lectura del archivo\n");
             Utils.parseReadings(parser.getInPath(), hz);
             Utils.parseSensorsData(parser.getInPath(), hz);
-            fw.write(LocalDateTime.now() + " - Fin de lectura del archivo\n");
+            fw.write(LocalDateTime.now().format(FORMATTER) + " - Fin de lectura del archivo\n");
 
 
             IList<Reading> readingIList = hz.getList(Constants.READINGS_MAP);
             KeyValueSource<String, Reading> source = KeyValueSource.fromList(readingIList);
 
-            fw.write(LocalDateTime.now() + " - Inicio del trabajo map/reduce\n");
+            fw.write(LocalDateTime.now().format(FORMATTER) + " - Inicio del trabajo map/reduce\n");
             try {
                 switch (parser.getQuery()) {
                     case 1:
@@ -75,7 +75,7 @@ public class Client {
                         runQuery5(parser.getOutPath(), hz, source);
                         break;
                 }
-                fw.write(LocalDateTime.now() + " - Inicio del trabajo map/reduce");
+                fw.write(LocalDateTime.now().format(FORMATTER) + " - Inicio del trabajo map/reduce");
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
                 LOGGER.error("Future job wasn't able to finish");
@@ -129,11 +129,12 @@ public class Client {
                 new String[]{"Sensor", "Max_Reading_Count", "Max_Reading_DateTime"});
     }
 
-    public static void runQuery4(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, int year, int topAmount) throws InterruptedException, ExecutionException {
+    public static void runQuery4(String outPath, HazelcastInstance hz,
+                                 KeyValueSource<String, Reading> source, int year, int topAmount) throws InterruptedException, ExecutionException {
         JobTracker t = hz.getJobTracker("query-4");
         Job<String, Reading> job = t.newJob(source);
 
-        // TODO: chequear #nomenclatura
+
         ICompletableFuture<Collection<TopSensorMonth>> future = job.mapper(
                         new TopAverageMonthMapper(year))
                 .reducer(new TopAverageMonthReducerFactory())

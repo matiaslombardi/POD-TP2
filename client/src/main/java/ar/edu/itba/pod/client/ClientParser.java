@@ -30,13 +30,11 @@ public class ClientParser {
 
         query = Integer.parseInt(properties.getProperty(QUERY));
 
-        // TODO: parsear
-
         if (properties.getProperty(ADDRESSES) == null) {
-            addresses = properties.getProperty(ADDRESSES).split(";");
             LOGGER.error("No addresses provided");
             System.exit(1);
         }
+        addresses = properties.getProperty(ADDRESSES).split(";");
 
 
         if ((inPath = properties.getProperty(IN_PATH)) == null) {
