@@ -21,6 +21,7 @@ import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -119,7 +120,7 @@ public class Client {
         Job<String, Reading> job = t.newJob(source);
 
         ICompletableFuture<Collection<MaxSensorResponse>> future = job.mapper(
-                new MaxReadingMapper(minValue))
+                        new MaxReadingMapper(minValue))
                 .reducer(new MaxReadingReducerFactory())
                 .submit(new MaxReadingCollator());
 
@@ -134,7 +135,7 @@ public class Client {
 
         // TODO: chequear #nomenclatura
         ICompletableFuture<Collection<TopSensorMonth>> future = job.mapper(
-                new TopAverageMonthMapper(year))
+                        new TopAverageMonthMapper(year))
                 .reducer(new TopAverageMonthReducerFactory())
                 .submit(new TopAverageMonthCollator(topAmount));
 

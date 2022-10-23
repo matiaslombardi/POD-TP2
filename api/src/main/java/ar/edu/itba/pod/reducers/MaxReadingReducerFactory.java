@@ -5,13 +5,13 @@ import ar.edu.itba.pod.models.hazelcast.Reading;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-public class MaxReadingReducerFactory implements ReducerFactory<String, Reading, MaxSensorReading> {
+public class MaxReadingReducerFactory implements ReducerFactory<String, MaxSensorReading, MaxSensorReading> {
     @Override
-    public Reducer<Reading, MaxSensorReading> newReducer(String s) {
+    public Reducer<MaxSensorReading, MaxSensorReading> newReducer(String s) {
         return new MaxReadingReducer();
     }
 
-    private static class MaxReadingReducer extends Reducer<Reading, MaxSensorReading> {
+    private static class MaxReadingReducer extends Reducer<MaxSensorReading, MaxSensorReading> {
         private MaxSensorReading maxReading;
 
         @Override
@@ -20,14 +20,14 @@ public class MaxReadingReducerFactory implements ReducerFactory<String, Reading,
         }
 
         @Override
-        public void reduce(Reading value) {
-            // TODO chequear comparacion de fechas
-            if (value.getHourlyCounts() == maxReading.getMaxReading() &&
-                    maxReading.isAfter(value.getYear(), value.getMonth(), value.getmDate(),
-                            value.getTime())) {
+        public void reduce(MaxSensorReading value) {
+            // TODO chequear comparacion de fechas -> Tira error cuando quiere levanter el month
+
+            if (value.getMaxReading() == maxReading.getMaxReading() &&
+                    value.isAfter(maxReading.getDate())) {
                 maxReading.updateMax(value);
             }
-            else if (value.getHourlyCounts() > maxReading.getMaxReading()) {
+            else if (value.getMaxReading() > maxReading.getMaxReading()) {
                 maxReading.updateMax(value);
             }
         }

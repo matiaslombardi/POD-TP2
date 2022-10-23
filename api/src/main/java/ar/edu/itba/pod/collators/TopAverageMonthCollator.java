@@ -27,8 +27,6 @@ public class TopAverageMonthCollator implements Collator<Map.Entry<String, Map<S
             topSensors.add(new TopSensorMonth(sensor, maxValueMonth.getKey(),
                     maxValueMonth.getValue()));
         });
-
-        // TODO: PROBAR CON CSV NUESTRO
         return topSensors.stream().limit(n).collect(Collectors.toList());
     }
 }
