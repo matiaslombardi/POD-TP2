@@ -16,6 +16,7 @@ public class ClientParser {
     private static final String MIN = "min";
     private static final String N = "n";
     private static final String YEAR = "year";
+    private static final String COMBINE = "combine";
 
     private int query;
     private String[] addresses;
@@ -24,6 +25,7 @@ public class ClientParser {
     private long min;
     private int n;
     private int year;
+    private boolean combine;
 
     public void parse() {
         Properties properties = System.getProperties();
@@ -46,6 +48,10 @@ public class ClientParser {
         if ((outPath = properties.getProperty(OUT_PATH)) == null) {
             LOGGER.error("No outPath provided");
             System.exit(1);
+        }
+
+        if ((query == 2 || query == 1) && properties.getProperty(COMBINE) != null) {
+            combine = true;
         }
 
         if (query == 3) {
@@ -94,5 +100,8 @@ public class ClientParser {
 
     public int getYear() {
         return year;
+    }
+    public boolean getCombine() {
+        return combine;
     }
 }

@@ -21,11 +21,11 @@ public class MaxReadingReducerFactory implements ReducerFactory<String, MaxSenso
 
         @Override
         public void reduce(MaxSensorReading value) {
-            if (value.getMaxReading() == maxReading.getMaxReading() &&
-                    value.isAfter(maxReading.getDate())) {
+            if (value.getMaxReading() > maxReading.getMaxReading()) {
                 maxReading.updateMax(value);
             }
-            else if (value.getMaxReading() > maxReading.getMaxReading()) {
+            else if (value.getMaxReading() == maxReading.getMaxReading() &&
+                    value.isAfter(maxReading.getDate())) {
                 maxReading.updateMax(value);
             }
         }

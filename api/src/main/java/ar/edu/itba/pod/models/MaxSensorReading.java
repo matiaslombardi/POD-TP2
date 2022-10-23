@@ -15,6 +15,8 @@ public class MaxSensorReading implements DataSerializable {
 
 
     public MaxSensorReading() {
+        date = LocalDateTime.MIN;
+        maxReading = 0;
     }
 
     public MaxSensorReading(MaxSensorReading reading) {

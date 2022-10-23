@@ -11,6 +11,14 @@ public class YearCountValues implements DataSerializable {
 
     public YearCountValues() {}
 
+    public YearCountValues(long count, boolean isWeekend) {
+        if (isWeekend)
+            weekendCount = count;
+        else
+            weekdaysCount = count;
+
+    }
+
     public YearCountValues(YearCountValues yearCountValues) {
         weekdaysCount = yearCountValues.weekdaysCount;
         weekendCount = yearCountValues.weekendCount;
@@ -40,6 +48,10 @@ public class YearCountValues implements DataSerializable {
         weekdaysCount += count;
     }
 
+    public void sumValues(YearCountValues other) {
+        sumWeekendCount(other.getWeekendCount());
+        sumWeekdaysCount(other.getWeekdaysCount());
+    }
 
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {

@@ -1,6 +1,8 @@
 package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.collators.*;
+import ar.edu.itba.pod.combiners.ReadingDateTypeCombinerFactory;
+import ar.edu.itba.pod.combiners.ReadingNameCombinerFactory;
 import ar.edu.itba.pod.mappers.*;
 import ar.edu.itba.pod.models.Constants;
 import ar.edu.itba.pod.models.TopSensorMonth;
@@ -21,22 +23,17 @@ import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-
-
-    // TODO: falta hacer un combiner
 
     public static void main(String[] args) {
         LOGGER.info("tpe2-g6-parent Client Starting ...");
@@ -60,10 +57,10 @@ public class Client {
             try {
                 switch (parser.getQuery()) {
                     case 1:
-                        runQuery1(parser.getOutPath(), hz, source);
+                        runQuery1(parser.getOutPath(), hz, source, parser.getCombine());
                         break;
                     case 2:
-                        runQuery2(parser.getOutPath(), hz, source);
+                        runQuery2(parser.getOutPath(), hz, source, parser.getCombine());
                         break;
                     case 3:
                         runQuery3(parser.getOutPath(), hz, source, parser.getMin());
@@ -88,30 +85,53 @@ public class Client {
         HazelcastClient.shutdownAll();
     }
 
-    public static void runQuery1(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source) throws InterruptedException, ExecutionException {
+    public static void runQuery1(String outPath, HazelcastInstance hz,
+                                 KeyValueSource<String, Reading> source,
+                                 boolean usesCombiner) throws InterruptedException, ExecutionException {
         JobTracker t = hz.getJobTracker("query-1");
         Job<String, Reading> job = t.newJob(source);
 
-        ICompletableFuture<Collection<TotalReadingSensor>> future = job.mapper(new ReadingNameMapper())
-                .reducer(new ReadingCountReducerFactory()).submit(new TotalReadingCollator());
+        ICompletableFuture<Collection<TotalReadingSensor>> future;
+
+        if (usesCombiner) {
+            future = job.mapper(new ReadingNameMapper())
+                    .combiner(new ReadingNameCombinerFactory())
+                    .reducer(new ReadingCountReducerFactory())
+                    .submit(new TotalReadingCollator());
+        } else {
+            future = job.mapper(new ReadingNameMapper())
+                    .reducer(new ReadingCountReducerFactory())
+                    .submit(new TotalReadingCollator());
+        }
 
         Collection<TotalReadingSensor> result = future.get();
+        String combineString = usesCombiner ? "c" : ""; // TODO: preguntar si lo mandamos asi o no
 
-        QueryResponseWriter.writeQueryResponse(outPath + "/query1.csv", result,
+        QueryResponseWriter.writeQueryResponse(outPath + "/query1" + combineString + ".csv", result,
                 new String[]{"Sensor", "Total_Count"});
     }
 
-    public static void runQuery2(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source) throws InterruptedException, ExecutionException {
+    public static void runQuery2(String outPath, HazelcastInstance hz,
+                                 KeyValueSource<String, Reading> source, boolean combine) throws InterruptedException, ExecutionException {
         JobTracker t = hz.getJobTracker("query-2");
         Job<String, Reading> job = t.newJob(source);
 
-        ICompletableFuture<Collection<YearCountResponse>> future = job.mapper(new ReadingDateTypeMapper())
-                .reducer(new CountPerDateTypeReducerFactory())
-                .submit(new OrderByYearCollator());
+        ICompletableFuture<Collection<YearCountResponse>> future;
+
+        if (combine) {
+            future = job.mapper(new ReadingDateTypeMapper())
+                    .combiner(new ReadingDateTypeCombinerFactory())
+                    .reducer(new CountPerDateTypeReducerFactory())
+                    .submit(new OrderByYearCollator());
+        } else {
+            future = job.mapper(new ReadingDateTypeMapper())
+                    .reducer(new CountPerDateTypeReducerFactory())
+                    .submit(new OrderByYearCollator());
+        }
 
         Collection<YearCountResponse> result = future.get();
-
-        QueryResponseWriter.writeQueryResponse(outPath + "/query2.csv", result,
+        String combineString = combine ? "c" : "";
+        QueryResponseWriter.writeQueryResponse(outPath + "/query2" + combineString + ".csv", result,
                 new String[]{"Year", "Weekdays_Count", "Weekends_Count", "Total_Count"});
     }
 
@@ -119,8 +139,8 @@ public class Client {
         JobTracker t = hz.getJobTracker("query-3");
         Job<String, Reading> job = t.newJob(source);
 
-        ICompletableFuture<Collection<MaxSensorResponse>> future = job.mapper(
-                        new MaxReadingMapper(minValue))
+        ICompletableFuture<Collection<MaxSensorResponse>> future = job
+                .mapper(new MaxReadingMapper(minValue))
                 .reducer(new MaxReadingReducerFactory())
                 .submit(new MaxReadingCollator());
 
@@ -135,8 +155,8 @@ public class Client {
         Job<String, Reading> job = t.newJob(source);
 
 
-        ICompletableFuture<Collection<TopSensorMonth>> future = job.mapper(
-                        new TopAverageMonthMapper(year))
+        ICompletableFuture<Collection<TopSensorMonth>> future = job
+                .mapper(new TopAverageMonthMapper(year))
                 .reducer(new TopAverageMonthReducerFactory())
                 .submit(new TopAverageMonthCollator(topAmount));
 

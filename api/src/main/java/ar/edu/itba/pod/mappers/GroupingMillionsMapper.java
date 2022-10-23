@@ -1,18 +1,9 @@
 package ar.edu.itba.pod.mappers;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.HazelcastInstanceAware;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
-public class GroupingMillionsMapper implements Mapper<String, Long, Long, String>,
-        HazelcastInstanceAware {
-    private transient HazelcastInstance hz;
-
-    @Override
-    public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        this.hz = hazelcastInstance;
-    }
+public class GroupingMillionsMapper implements Mapper<String, Long, Long, String> {
 
     @Override
     public void map(String sensor, Long count, Context<Long, String> context) {
