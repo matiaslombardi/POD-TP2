@@ -33,6 +33,9 @@ public class ClientUtils {
     private static final ICSVParser CSV_PARSER = new CSVParserBuilder().withSeparator(';').build();
 
     public static void parseReadings(String filePath, HazelcastInstance hz) {
+        IList<Reading> readings = hz.getList(Constants.READINGS_MAP);
+        readings.clear();
+
         List<Reading> toAdd = new ArrayList<>();
         try (FileReader fr = new FileReader(filePath + Constants.READINGS_FILE);
              CSVReader reader = new CSVReaderBuilder(fr)
@@ -48,6 +51,11 @@ public class ClientUtils {
                         Integer.parseInt(nextLine[Constants.TIME]),
                         Integer.parseInt(nextLine[Constants.READING_SENSOR_ID]),
                         Long.parseLong(nextLine[Constants.HOURLY_COUNT])));
+
+                if (toAdd.size() == 1000) {
+                    readings.addAll(toAdd);
+                    toAdd.clear();
+                }
             }
         } catch (IOException | CsvValidationException e) {
             if (e instanceof FileNotFoundException)
@@ -56,8 +64,7 @@ public class ClientUtils {
                 LOGGER.error("Error reading CSV");
             System.exit(1);
         }
-        IList<Reading> readings = hz.getList(Constants.READINGS_MAP);
-        readings.clear();
+
         readings.addAll(toAdd);
     }
 
