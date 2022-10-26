@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Query2Test {
 
@@ -75,12 +74,12 @@ public class Query2Test {
 
         assertEquals(3, actualValue.size());
         System.out.println(actualValue);
-        assertTrue(actualValue.contains(new YearCountResponse(2020, new YearCountValues(18000, false))));
-        assertTrue(actualValue.contains(new YearCountResponse(2021, new YearCountValues() {{
+        assertEquals(new YearCountResponse(2022, new YearCountValues(29000, false)), actualValue.toArray()[0]);
+        assertEquals(new YearCountResponse(2021, new YearCountValues() {{
             setWeekdaysCount(135000);
             setWeekendCount(60000);
-        }})));
-        assertTrue(actualValue.contains(new YearCountResponse(2022, new YearCountValues(29000, false))));
+        }}), actualValue.toArray()[1]);
+        assertEquals(new YearCountResponse(2020, new YearCountValues(18000, false)), actualValue.toArray()[2]);
     }
 
     @AfterEach

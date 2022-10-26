@@ -71,10 +71,8 @@ public class Query1Test {
         Collection<TotalReadingSensor> actualValue = future.get();
 
         assertEquals(2, actualValue.size());
-
-        assertTrue(actualValue.contains(new TotalReadingSensor(TestConstants.SENSOR_1_NAME, 98000)));
-        assertTrue(actualValue.contains(new TotalReadingSensor(TestConstants.SENSOR_2_NAME, 49000)));
-        assertFalse(actualValue.contains(new TotalReadingSensor(TestConstants.SENSOR_3_NAME, 95000)));
+        assertEquals(new TotalReadingSensor(TestConstants.SENSOR_1_NAME, 98000), actualValue.toArray()[0]);
+        assertEquals(new TotalReadingSensor(TestConstants.SENSOR_2_NAME, 49000), actualValue.toArray()[1]);
     }
 
     @Test
