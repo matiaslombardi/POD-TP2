@@ -64,7 +64,7 @@ public class Query1Test {
         Job<String, Reading> job = jobTracker.newJob(source);
 
         ICompletableFuture<Collection<TotalReadingSensor>> future = job
-                .mapper(new ReadingNameMapper())
+                .mapper(new ReadingNameMapper(sensorIMap))
                 .reducer(new ReadingCountReducerFactory())
                 .submit(new TotalReadingCollator());
 
@@ -89,7 +89,7 @@ public class Query1Test {
         Job<String, Reading> job = jobTracker.newJob(source);
 
         ICompletableFuture<Collection<TotalReadingSensor>> future = job
-                .mapper(new ReadingNameMapper())
+                .mapper(new ReadingNameMapper(sensorIMap))
                 .reducer(new ReadingCountReducerFactory())
                 .submit(new TotalReadingCollator());
 

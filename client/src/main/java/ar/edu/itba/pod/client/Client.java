@@ -5,6 +5,7 @@ import ar.edu.itba.pod.combiners.ReadingDateTypeCombinerFactory;
 import ar.edu.itba.pod.combiners.ReadingNameCombinerFactory;
 import ar.edu.itba.pod.mappers.*;
 import ar.edu.itba.pod.models.Constants;
+import ar.edu.itba.pod.models.hazelcast.Sensor;
 import ar.edu.itba.pod.models.responses.TopSensorMonth;
 import ar.edu.itba.pod.models.responses.TotalReadingSensor;
 import ar.edu.itba.pod.models.hazelcast.Reading;
@@ -50,7 +51,7 @@ public class Client {
         try (FileWriter fw = new FileWriter("time" + parser.getQuery() + timeCombined + ".txt", false)) {
             fw.write(LocalDateTime.now().format(FORMATTER) + " - Inicio de lectura del archivo\n");
             ClientUtils.parseReadings(parser.getInPath(), hz);
-            ClientUtils.parseSensorsData(parser.getInPath(), hz);
+            Map<Integer, Sensor> sensorMap = ClientUtils.parseSensorsData(parser.getInPath(), hz);
             fw.write(LocalDateTime.now().format(FORMATTER) + " - Fin de lectura del archivo\n");
 
 
@@ -61,7 +62,7 @@ public class Client {
             try {
                 switch (parser.getQuery()) {
                     case 1:
-                        runQuery1(parser.getOutPath(), hz, source, parser.getCombine());
+                        runQuery1(parser.getOutPath(), hz, source, parser.getCombine(), sensorMap);
                         break;
                     case 2:
                         runQuery2(parser.getOutPath(), hz, source, parser.getCombine());
@@ -93,7 +94,7 @@ public class Client {
         HazelcastClient.shutdownAll();
     }
 
-    public static void runQuery1(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, boolean usesCombiner) throws InterruptedException, ExecutionException {
+    public static void runQuery1(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, boolean usesCombiner, Map<Integer, Sensor> sensorMap) throws InterruptedException, ExecutionException {
         JobTracker t = hz.getJobTracker("query-1");
         Job<String, Reading> job = t.newJob(source);
 
@@ -101,13 +102,13 @@ public class Client {
 
         if (usesCombiner) {
             future = job
-                    .mapper(new ReadingNameMapper())
+                    .mapper(new ReadingNameMapper(sensorMap))
                     .combiner(new ReadingNameCombinerFactory())
                     .reducer(new ReadingCountReducerFactory())
                     .submit(new TotalReadingCollator());
         } else {
             future = job
-                    .mapper(new ReadingNameMapper())
+                    .mapper(new ReadingNameMapper(sensorMap))
                     .reducer(new ReadingCountReducerFactory())
                     .submit(new TotalReadingCollator());
         }
@@ -176,7 +177,7 @@ public class Client {
         Job<String, Reading> countingJob = t.newJob(rawSource);
 
         ICompletableFuture<Map<String, Long>> futureCounted = countingJob
-                .mapper(new ReadingNameMapper())
+                .mapper(new ReadingNameMapper(hz.getMap(Constants.SENSORS_MAP)))
                 .reducer(new ReadingCountReducerFactory())
                 .submit();
 

@@ -68,7 +68,7 @@ public class ClientUtils {
         readings.addAll(toAdd);
     }
 
-    public static void parseSensorsData(String fileName, HazelcastInstance hz) {
+    public static Map<Integer, Sensor> parseSensorsData(String fileName, HazelcastInstance hz) {
         Map<Integer, Sensor> toAdd = new HashMap<>();
         try (FileReader fr = new FileReader(fileName + Constants.SENSORS_FILE);
              CSVReader reader = new CSVReaderBuilder(fr).withCSVParser(CSV_PARSER).build()) {
@@ -92,6 +92,7 @@ public class ClientUtils {
         IMap<Integer, Sensor> sensors = hz.getMap(Constants.SENSORS_MAP);
         sensors.clear();
         sensors.putAll(toAdd);
+        return toAdd;
     }
 
     public static HazelcastInstance getHazelcastInstance(String[] addresses) {

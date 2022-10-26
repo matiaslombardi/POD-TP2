@@ -68,7 +68,7 @@ public class Query5Test {
         Job<String, Reading> countingJob = jobTracker.newJob(source);
 
         ICompletableFuture<Map<String, Long>> futureCounted = countingJob
-                .mapper(new ReadingNameMapper())
+                .mapper(new ReadingNameMapper(sensorIMap))
                 .reducer(new ReadingCountReducerFactory())
                 .submit();
 
@@ -105,7 +105,7 @@ public class Query5Test {
         Job<String, Reading> countingJob = jobTracker.newJob(source);
 
         ICompletableFuture<Map<String, Long>> futureCounted = countingJob
-                .mapper(new ReadingNameMapper())
+                .mapper(new ReadingNameMapper(sensorIMap))
                 .reducer(new ReadingCountReducerFactory())
                 .submit();
 
