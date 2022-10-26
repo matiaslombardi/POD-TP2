@@ -34,7 +34,7 @@ Contiene parsers necesarios para cada query a invocar y se encarga de crear el t
 ---------------------------------------------------------------------------------
 
 ## Compilación y ejecución
-Antes de comenzar a compilar y ejecutar el proyecto, modifique la variable TP_PATH en el archivo `compile.sh` con la ruta absoluta del directorio donde se encuentra el proyecto.
+Asegurarse de enocontrarse en el directorio principal del proyecto y de darle permisos de ejecución al ejecutable `compile.sh` con el comando `chmod +x compile.sh`.
 Luego, ejecute:
 ```bash
 > ./compile.sh
@@ -43,8 +43,11 @@ Luego, ejecute:
 ### Server
 Para ejecutar el servidor, ubíquese en el directorio `tpe2-g6-server-1.0-SNAPSHOT` y ejecute:
 ```bash
-> run-server.sh
+> run-server.sh -Dmask='xx.xx.xx.xx'
 ```
+donde `xx.xx.xx.xx` es la mascara IP de la red en la que se encuentra el servidor.
+En caso de no indicarla, el valor default es `127.0.0.*`
+
 Esto levantará una instancia de hazelcast
 
 ### Client
@@ -52,7 +55,7 @@ Para ejecutar cualquiera de las consultas, ubíquese en el directorio `tpe2-g6-c
 ```bash
 > ./queryX -Daddresses='xx.xx.xx.xx:yyyy' -DinPath=XX -DoutPath=YY [params]
 ```
-donde:
+
 * `X` es el número de la consulta a ejecutar
 * `-Daddresses=xx.xx.xx.xx:yyyy` donde `xx.xx.xx.xx` es la dirección IP del servidor y `yyyy` es el puerto en el que se ejecuta alguno de los nodos del cluster. 
 Pueden indicarse varias IPs, separadas por punto y coma (;).
