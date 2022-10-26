@@ -1,6 +1,6 @@
 package ar.edu.itba.pod.collators;
 
-import ar.edu.itba.pod.models.TopSensorMonth;
+import ar.edu.itba.pod.models.responses.TopSensorMonth;
 import com.hazelcast.mapreduce.Collator;
 
 import java.util.*;

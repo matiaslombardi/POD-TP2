@@ -13,7 +13,6 @@ public class MaxSensorReading implements DataSerializable {
     private LocalDateTime date;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:00");
 
-
     public MaxSensorReading() {
         date = LocalDateTime.MIN;
         maxReading = 0;

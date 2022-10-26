@@ -1,7 +1,6 @@
 package ar.edu.itba.pod.reducers;
 
 import ar.edu.itba.pod.models.MaxSensorReading;
-import ar.edu.itba.pod.models.hazelcast.Reading;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 

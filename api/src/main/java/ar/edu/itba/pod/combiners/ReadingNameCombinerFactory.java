@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.combiners;
 
-import ar.edu.itba.pod.models.hazelcast.Reading;
 import com.hazelcast.mapreduce.Combiner;
 import com.hazelcast.mapreduce.CombinerFactory;
 

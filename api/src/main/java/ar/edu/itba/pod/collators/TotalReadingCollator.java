@@ -1,6 +1,6 @@
 package ar.edu.itba.pod.collators;
 
-import ar.edu.itba.pod.models.TotalReadingSensor;
+import ar.edu.itba.pod.models.responses.TotalReadingSensor;
 import com.hazelcast.mapreduce.Collator;
 import java.util.*;
 

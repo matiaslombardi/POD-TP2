@@ -34,8 +34,6 @@ public class MaxReadingMapper implements Mapper<String, Reading, String, MaxSens
                     value.getmDate(), value.getTime(), 0
             );
 
-            // TODO: no esta muy bueno que sea MaxSensorReading pero sino
-            //  habria que crear otra clase y no tiene sentido
             context.emit(sensor.getDescription(), new MaxSensorReading(value.getHourlyCounts(),
                     dateTime));
         }

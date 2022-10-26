@@ -1,5 +1,6 @@
-package ar.edu.itba.pod.models;
+package ar.edu.itba.pod.models.responses;
 
+import ar.edu.itba.pod.models.CSVWriteable;
 import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;

@@ -90,7 +90,8 @@ public class Utils {
     }
 
 
+    // TODO: mover estos metodos a cliente y el getDays en otro lado
     public static int getDaysPerMonth(String month) {
-        return DaysPerMonth.valueOf(month.toUpperCase()).getDays();//daysPerMonth.get(month.toUpperCase());
+        return DaysPerMonth.valueOf(month.toUpperCase()).getDays();
     }
 }

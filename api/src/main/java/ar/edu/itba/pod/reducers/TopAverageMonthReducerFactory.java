@@ -4,8 +4,6 @@ import ar.edu.itba.pod.models.MonthReading;
 import ar.edu.itba.pod.models.Utils;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
-
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +16,7 @@ public class TopAverageMonthReducerFactory implements ReducerFactory<String, Mon
     }
 
     private static class TopAverageMonthReducer extends Reducer<MonthReading, Map<String, Double>> {
-        Map<String, Double> averagePerMonth;
+        private Map<String, Double> averagePerMonth;
 
         @Override
         public void beginReduce() {

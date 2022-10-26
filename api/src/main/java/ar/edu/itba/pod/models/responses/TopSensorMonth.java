@@ -1,4 +1,6 @@
-package ar.edu.itba.pod.models;
+package ar.edu.itba.pod.models.responses;
+
+import ar.edu.itba.pod.models.CSVWriteable;
 
 public class TopSensorMonth implements Comparable<TopSensorMonth>, CSVWriteable {
     private String sensor;
