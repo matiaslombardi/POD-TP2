@@ -1,7 +1,7 @@
 package ar.edu.itba.pod.reducers;
 
+import ar.edu.itba.pod.models.DaysPerMonth;
 import ar.edu.itba.pod.models.MonthReading;
-import ar.edu.itba.pod.models.Utils;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 import java.util.HashMap;
@@ -33,11 +33,15 @@ public class TopAverageMonthReducerFactory implements ReducerFactory<String, Mon
         @Override
         public Map<String, Double> finalizeReduce() {
             for (Map.Entry<String, Double> entry : averagePerMonth.entrySet()) {
-                int days = Utils.getDaysPerMonth(entry.getKey());
+                int days = getDaysPerMonth(entry.getKey());
                 entry.setValue(Math.floor(entry.getValue() * 100 / days) / 100);
             }
 
             return averagePerMonth;
+        }
+
+        private int getDaysPerMonth(String month) {
+            return DaysPerMonth.valueOf(month.toUpperCase()).getDays();
         }
     }
 }

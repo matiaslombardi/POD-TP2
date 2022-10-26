@@ -7,7 +7,6 @@ import ar.edu.itba.pod.mappers.*;
 import ar.edu.itba.pod.models.Constants;
 import ar.edu.itba.pod.models.responses.TopSensorMonth;
 import ar.edu.itba.pod.models.responses.TotalReadingSensor;
-import ar.edu.itba.pod.models.Utils;
 import ar.edu.itba.pod.models.hazelcast.Reading;
 import ar.edu.itba.pod.models.responses.MaxSensorResponse;
 import ar.edu.itba.pod.models.responses.MillionsPairResponse;
@@ -23,6 +22,8 @@ import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -41,12 +42,15 @@ public class Client {
         ClientParser parser = new ClientParser();
         parser.parse();
 
-        HazelcastInstance hz = Utils.getHazelcastInstance(parser.getAddresses());
+        HazelcastInstance hz = ClientUtils.getHazelcastInstance(parser.getAddresses());
 
-        try (FileWriter fw = new FileWriter("time" + parser.getQuery() + ".txt", false)) {
+        // TODO: preguntar si lo mandamos asi o no
+        String timeCombined = parser.getCombine() ? "c" : "";
+
+        try (FileWriter fw = new FileWriter("time" + parser.getQuery() + timeCombined + ".txt", false)) {
             fw.write(LocalDateTime.now().format(FORMATTER) + " - Inicio de lectura del archivo\n");
-            Utils.parseReadings(parser.getInPath(), hz);
-            Utils.parseSensorsData(parser.getInPath(), hz);
+            ClientUtils.parseReadings(parser.getInPath(), hz);
+            ClientUtils.parseSensorsData(parser.getInPath(), hz);
             fw.write(LocalDateTime.now().format(FORMATTER) + " - Fin de lectura del archivo\n");
 
 
@@ -74,32 +78,36 @@ public class Client {
                 }
                 fw.write(LocalDateTime.now().format(FORMATTER) + " - Inicio del trabajo map/reduce");
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
                 LOGGER.error("Future job wasn't able to finish");
+                System.exit(1);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            LOGGER.error("Couldn't write to file");
+            if (e instanceof FileNotFoundException) {
+                LOGGER.error("File not found");
+            } else {
+                LOGGER.error("Error while writing to file");
+            }
+            System.exit(1);
         }
 
         HazelcastClient.shutdownAll();
     }
 
-    public static void runQuery1(String outPath, HazelcastInstance hz,
-                                 KeyValueSource<String, Reading> source,
-                                 boolean usesCombiner) throws InterruptedException, ExecutionException {
+    public static void runQuery1(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, boolean usesCombiner) throws InterruptedException, ExecutionException {
         JobTracker t = hz.getJobTracker("query-1");
         Job<String, Reading> job = t.newJob(source);
 
         ICompletableFuture<Collection<TotalReadingSensor>> future;
 
         if (usesCombiner) {
-            future = job.mapper(new ReadingNameMapper())
+            future = job
+                    .mapper(new ReadingNameMapper())
                     .combiner(new ReadingNameCombinerFactory())
                     .reducer(new ReadingCountReducerFactory())
                     .submit(new TotalReadingCollator());
         } else {
-            future = job.mapper(new ReadingNameMapper())
+            future = job
+                    .mapper(new ReadingNameMapper())
                     .reducer(new ReadingCountReducerFactory())
                     .submit(new TotalReadingCollator());
         }
@@ -107,32 +115,31 @@ public class Client {
         Collection<TotalReadingSensor> result = future.get();
         String combineString = usesCombiner ? "c" : ""; // TODO: preguntar si lo mandamos asi o no
 
-        QueryResponseWriter.writeQueryResponse(outPath + "/query1" + combineString + ".csv", result,
-                new String[]{"Sensor", "Total_Count"});
+        QueryResponseWriter.writeQueryResponse(outPath + "/query1" + combineString + ".csv", result, new String[]{"Sensor", "Total_Count"});
     }
 
-    public static void runQuery2(String outPath, HazelcastInstance hz,
-                                 KeyValueSource<String, Reading> source, boolean combine) throws InterruptedException, ExecutionException {
+    public static void runQuery2(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, boolean combine) throws InterruptedException, ExecutionException {
         JobTracker t = hz.getJobTracker("query-2");
         Job<String, Reading> job = t.newJob(source);
 
         ICompletableFuture<Collection<YearCountResponse>> future;
 
         if (combine) {
-            future = job.mapper(new ReadingDateTypeMapper())
+            future = job
+                    .mapper(new ReadingDateTypeMapper())
                     .combiner(new ReadingDateTypeCombinerFactory())
                     .reducer(new CountPerDateTypeReducerFactory())
                     .submit(new OrderByYearCollator());
         } else {
-            future = job.mapper(new ReadingDateTypeMapper())
+            future = job
+                    .mapper(new ReadingDateTypeMapper())
                     .reducer(new CountPerDateTypeReducerFactory())
                     .submit(new OrderByYearCollator());
         }
 
         Collection<YearCountResponse> result = future.get();
         String combineString = combine ? "c" : "";
-        QueryResponseWriter.writeQueryResponse(outPath + "/query2" + combineString + ".csv", result,
-                new String[]{"Year", "Weekdays_Count", "Weekends_Count", "Total_Count"});
+        QueryResponseWriter.writeQueryResponse(outPath + "/query2" + combineString + ".csv", result, new String[]{"Year", "Weekdays_Count", "Weekends_Count", "Total_Count"});
     }
 
     public static void runQuery3(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, long minValue) throws InterruptedException, ExecutionException {
@@ -145,12 +152,10 @@ public class Client {
                 .submit(new MaxReadingCollator());
 
         Collection<MaxSensorResponse> result = future.get();
-        QueryResponseWriter.writeQueryResponse(outPath + "/query3.csv", result,
-                new String[]{"Sensor", "Max_Reading_Count", "Max_Reading_DateTime"});
+        QueryResponseWriter.writeQueryResponse(outPath + "/query3.csv", result, new String[]{"Sensor", "Max_Reading_Count", "Max_Reading_DateTime"});
     }
 
-    public static void runQuery4(String outPath, HazelcastInstance hz,
-                                 KeyValueSource<String, Reading> source, int year, int topAmount) throws InterruptedException, ExecutionException {
+    public static void runQuery4(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, int year, int topAmount) throws InterruptedException, ExecutionException {
         JobTracker t = hz.getJobTracker("query-4");
         Job<String, Reading> job = t.newJob(source);
 
@@ -162,8 +167,7 @@ public class Client {
 
         Collection<TopSensorMonth> result = future.get();
 
-        QueryResponseWriter.writeQueryResponse(outPath + "/query4.csv", result,
-                new String[]{"Sensor", "Month", "Max_Monthly_Avg"});
+        QueryResponseWriter.writeQueryResponse(outPath + "/query4.csv", result, new String[]{"Sensor", "Month", "Max_Monthly_Avg"});
 
     }
 
@@ -171,7 +175,8 @@ public class Client {
         JobTracker t = hz.getJobTracker("query-5");
         Job<String, Reading> countingJob = t.newJob(rawSource);
 
-        ICompletableFuture<Map<String, Long>> futureCounted = countingJob.mapper(new ReadingNameMapper())
+        ICompletableFuture<Map<String, Long>> futureCounted = countingJob
+                .mapper(new ReadingNameMapper())
                 .reducer(new ReadingCountReducerFactory())
                 .submit();
 
@@ -189,7 +194,8 @@ public class Client {
 
         Collection<MillionsPairResponse> groupedResult = futureGrouped.get();
 
-        QueryResponseWriter.writeQueryResponse(outPath + "/query5.csv", groupedResult,
-                new String[]{"Group", "Sensor A", "Sensor B"});
+        QueryResponseWriter.writeQueryResponse(outPath + "/query5.csv", groupedResult, new String[]{"Group", "Sensor A", "Sensor B"});
     }
+
+
 }

@@ -38,7 +38,6 @@ public class ClientParser {
         }
         addresses = properties.getProperty(ADDRESSES).split(";");
 
-
         if ((inPath = properties.getProperty(IN_PATH)) == null) {
             LOGGER.error("No inPath provided");
             System.exit(1);
@@ -55,20 +54,52 @@ public class ClientParser {
         }
 
         if (query == 3) {
-            if ((min = Long.parseLong(properties.getProperty(MIN))) == 0) {
-                LOGGER.error("No min provided");
+            String minString = properties.getProperty(MIN);
+            if (minString == null) {
+                LOGGER.error("No min value provided");
+                System.exit(1);
+            }
+            try {
+                min = Long.parseLong(minString);
+            } catch (NumberFormatException e) {
+                LOGGER.error("Min value must be a number");
+                System.exit(1);
+            }
+            if (min < 1) {
+                LOGGER.error("Min value must be greater than 0");
                 System.exit(1);
             }
         }
 
         if (query == 4) {
-            if ((n = Integer.parseInt(properties.getProperty(N))) == 0) {
-                LOGGER.error("No n provided");
+            String nString = properties.getProperty(N);
+            if (nString == null) {
+                LOGGER.error("No n value provided");
                 System.exit(1);
             }
-
-            if ((year = Integer.parseInt(properties.getProperty(YEAR))) == 0) {
-                LOGGER.error("No year provided");
+            try {
+                n = Integer.parseInt(nString);
+            } catch (NumberFormatException e) {
+                LOGGER.error("N value must be a number");
+                System.exit(1);
+            }
+            if (n < 1) {
+                LOGGER.error("N value must be greater than 0");
+                System.exit(1);
+            }
+            String yearString = properties.getProperty(YEAR);
+            if (yearString == null) {
+                LOGGER.error("No year value provided");
+                System.exit(1);
+            }
+            try {
+                year = Integer.parseInt(yearString);
+            } catch (NumberFormatException e) {
+                LOGGER.error("Year value must be a number");
+                System.exit(1);
+            }
+            if (year < 1) {
+                LOGGER.error("Year value must be greater than 0");
                 System.exit(1);
             }
         }
@@ -101,6 +132,7 @@ public class ClientParser {
     public int getYear() {
         return year;
     }
+
     public boolean getCombine() {
         return combine;
     }
