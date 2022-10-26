@@ -57,7 +57,14 @@ public class MillionsPairResponse implements DataSerializable, CSVWriteable, Com
 
     @Override
     public int compareTo(MillionsPairResponse o) {
-        return -Long.compare(value, o.value);
+        int toReturn = -Long.compare(value, o.value);
+        if (toReturn == 0) {
+            toReturn = first.compareTo(o.first);
+            if (toReturn == 0) {
+                toReturn = second.compareTo(o.second);
+            }
+        }
+        return toReturn;
     }
 
     @Override
