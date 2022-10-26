@@ -4,6 +4,7 @@ import com.hazelcast.nio.ObjectDataInput;
 import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 import java.io.IOException;
+import java.util.Objects;
 
 public class YearCountValues implements DataSerializable {
     private long weekendCount;
@@ -63,5 +64,18 @@ public class YearCountValues implements DataSerializable {
     public void readData(ObjectDataInput in) throws IOException {
         this.weekdaysCount = in.readLong();
         this.weekendCount = in.readLong();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        YearCountValues that = (YearCountValues) o;
+        return weekendCount == that.weekendCount && weekdaysCount == that.weekdaysCount;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(weekendCount, weekdaysCount);
     }
 }

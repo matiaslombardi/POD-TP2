@@ -21,7 +21,7 @@ public class MillionsPairCollator implements Collator<Map.Entry<Long, List<Strin
 
             for (int i = 0; i < values.size(); i++) {
                 for (int j = i + 1; j < values.size(); j++)
-                    toReturn.add(new MillionsPairResponse(key, values.get(i), values.get(j)));
+                    toReturn.add(new MillionsPairResponse(key, values.get(j), values.get(i))); // TODO Fijarse orden
             }
         });
 
