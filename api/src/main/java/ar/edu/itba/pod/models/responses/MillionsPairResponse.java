@@ -6,6 +6,7 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class MillionsPairResponse implements DataSerializable, CSVWriteable, Comparable<MillionsPairResponse> {
     private long value;
@@ -57,5 +58,18 @@ public class MillionsPairResponse implements DataSerializable, CSVWriteable, Com
     @Override
     public int compareTo(MillionsPairResponse o) {
         return -Long.compare(value, o.value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MillionsPairResponse that = (MillionsPairResponse) o;
+        return value == that.value && Objects.equals(first, that.first) && Objects.equals(second, that.second);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, first, second);
     }
 }

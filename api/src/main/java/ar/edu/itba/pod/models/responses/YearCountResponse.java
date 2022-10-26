@@ -7,6 +7,7 @@ import com.hazelcast.nio.ObjectDataOutput;
 import com.hazelcast.nio.serialization.DataSerializable;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class YearCountResponse extends YearCountValues implements DataSerializable, Comparable<YearCountResponse>, CSVWriteable {
 
@@ -47,4 +48,21 @@ public class YearCountResponse extends YearCountValues implements DataSerializab
         return new String[]{String.valueOf(year), String.valueOf(getWeekdaysCount()),
                 String.valueOf(getWeekendCount()), String.valueOf(getWeekdaysCount() + getWeekendCount())};
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        YearCountResponse that = (YearCountResponse) o;
+        return year == that.year
+                && super.getWeekendCount() == that.getWeekendCount()
+                && super.getWeekdaysCount() == that.getWeekdaysCount();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), year);
+    }
+
 }
