@@ -39,7 +39,7 @@ public class TopSensorMonth implements Comparable<TopSensorMonth>, CSVWriteable 
 
     @Override
     public String[] toCSVData() {
-        return new String[]{sensor, month, String.valueOf(average)};
+        return new String[]{sensor, month, String.format("%.2f", average)};
     }
 
     @Override
