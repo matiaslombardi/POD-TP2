@@ -10,7 +10,6 @@ import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
-import com.hazelcast.core.IMap;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ClientUtils {
-    //TODO: manejo de errores
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientUtils.class);
     private static final ICSVParser CSV_PARSER = new CSVParserBuilder().withSeparator(';').build();
 
@@ -69,13 +67,13 @@ public class ClientUtils {
     }
 
     public static Map<Integer, Sensor> parseSensorsData(String fileName, HazelcastInstance hz) {
-        Map<Integer, Sensor> toAdd = new HashMap<>();
+        Map<Integer, Sensor> sensorMap = new HashMap<>();
         try (FileReader fr = new FileReader(fileName + Constants.SENSORS_FILE);
              CSVReader reader = new CSVReaderBuilder(fr).withCSVParser(CSV_PARSER).build()) {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                toAdd.put(Integer.parseInt(nextLine[Constants.SENSOR_ID]),
+                sensorMap.put(Integer.parseInt(nextLine[Constants.SENSOR_ID]),
                         new Sensor(
                                 Integer.parseInt(nextLine[Constants.SENSOR_ID]),
                                 nextLine[Constants.SENSOR_DESCRIPTION],
@@ -89,10 +87,7 @@ public class ClientUtils {
             System.exit(1);
         }
 
-        IMap<Integer, Sensor> sensors = hz.getMap(Constants.SENSORS_MAP);
-        sensors.clear();
-        sensors.putAll(toAdd);
-        return toAdd;
+        return sensorMap;
     }
 
     public static HazelcastInstance getHazelcastInstance(String[] addresses) {

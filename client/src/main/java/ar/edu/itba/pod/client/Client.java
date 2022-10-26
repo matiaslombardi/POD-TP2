@@ -45,7 +45,6 @@ public class Client {
 
         HazelcastInstance hz = ClientUtils.getHazelcastInstance(parser.getAddresses());
 
-        // TODO: preguntar si lo mandamos asi o no
         String timeCombined = parser.getCombine() ? "c" : "";
 
         try (FileWriter fw = new FileWriter("time" + parser.getQuery() + timeCombined + ".txt", false)) {
@@ -68,16 +67,16 @@ public class Client {
                         runQuery2(parser.getOutPath(), hz, source, parser.getCombine());
                         break;
                     case 3:
-                        runQuery3(parser.getOutPath(), hz, source, parser.getMin());
+                        runQuery3(parser.getOutPath(), hz, source, parser.getMin(), sensorMap);
                         break;
                     case 4:
-                        runQuery4(parser.getOutPath(), hz, source, parser.getYear(), parser.getN());
+                        runQuery4(parser.getOutPath(), hz, source, parser.getYear(), parser.getN(), sensorMap);
                         break;
                     case 5:
-                        runQuery5(parser.getOutPath(), hz, source);
+                        runQuery5(parser.getOutPath(), hz, source, sensorMap);
                         break;
                 }
-                fw.write(LocalDateTime.now().format(FORMATTER) + " - Inicio del trabajo map/reduce");
+                fw.write(LocalDateTime.now().format(FORMATTER) + " - Fin del trabajo map/reduce");
             } catch (InterruptedException | ExecutionException e) {
                 LOGGER.error("Future job wasn't able to finish");
                 System.exit(1);
@@ -114,7 +113,7 @@ public class Client {
         }
 
         Collection<TotalReadingSensor> result = future.get();
-        String combineString = usesCombiner ? "c" : ""; // TODO: preguntar si lo mandamos asi o no
+        String combineString = usesCombiner ? "c" : "";
 
         QueryResponseWriter.writeQueryResponse(outPath + "/query1" + combineString + ".csv", result, new String[]{"Sensor", "Total_Count"});
     }
@@ -143,12 +142,12 @@ public class Client {
         QueryResponseWriter.writeQueryResponse(outPath + "/query2" + combineString + ".csv", result, new String[]{"Year", "Weekdays_Count", "Weekends_Count", "Total_Count"});
     }
 
-    public static void runQuery3(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, long minValue) throws InterruptedException, ExecutionException {
+    public static void runQuery3(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, long minValue, Map<Integer, Sensor> sensorMap) throws InterruptedException, ExecutionException {
         JobTracker t = hz.getJobTracker("query-3");
         Job<String, Reading> job = t.newJob(source);
 
         ICompletableFuture<Collection<MaxSensorResponse>> future = job
-                .mapper(new MaxReadingMapper(minValue))
+                .mapper(new MaxReadingMapper(minValue, sensorMap))
                 .reducer(new MaxReadingReducerFactory())
                 .submit(new MaxReadingCollator());
 
@@ -156,13 +155,13 @@ public class Client {
         QueryResponseWriter.writeQueryResponse(outPath + "/query3.csv", result, new String[]{"Sensor", "Max_Reading_Count", "Max_Reading_DateTime"});
     }
 
-    public static void runQuery4(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, int year, int topAmount) throws InterruptedException, ExecutionException {
+    public static void runQuery4(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> source, int year, int topAmount, Map<Integer, Sensor> sensorMap) throws InterruptedException, ExecutionException {
         JobTracker t = hz.getJobTracker("query-4");
         Job<String, Reading> job = t.newJob(source);
 
 
         ICompletableFuture<Collection<TopSensorMonth>> future = job
-                .mapper(new TopAverageMonthMapper(year))
+                .mapper(new TopAverageMonthMapper(year, sensorMap))
                 .reducer(new TopAverageMonthReducerFactory())
                 .submit(new TopAverageMonthCollator(topAmount));
 
@@ -172,12 +171,12 @@ public class Client {
 
     }
 
-    public static void runQuery5(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> rawSource) throws ExecutionException, InterruptedException {
+    public static void runQuery5(String outPath, HazelcastInstance hz, KeyValueSource<String, Reading> rawSource, Map<Integer, Sensor> sensorMap) throws ExecutionException, InterruptedException {
         JobTracker t = hz.getJobTracker("query-5");
         Job<String, Reading> countingJob = t.newJob(rawSource);
 
         ICompletableFuture<Map<String, Long>> futureCounted = countingJob
-                .mapper(new ReadingNameMapper(hz.getMap(Constants.SENSORS_MAP)))
+                .mapper(new ReadingNameMapper(sensorMap))
                 .reducer(new ReadingCountReducerFactory())
                 .submit();
 

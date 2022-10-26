@@ -2,14 +2,11 @@ package ar.edu.itba.pod.models.responses;
 
 import ar.edu.itba.pod.models.CSVWriteable;
 import ar.edu.itba.pod.models.YearCountValues;
-import com.hazelcast.nio.ObjectDataInput;
-import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.nio.serialization.DataSerializable;
 
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class YearCountResponse extends YearCountValues implements DataSerializable, Comparable<YearCountResponse>, CSVWriteable {
+public class YearCountResponse extends YearCountValues implements Serializable, Comparable<YearCountResponse>, CSVWriteable {
 
     private int year;
 
@@ -20,18 +17,6 @@ public class YearCountResponse extends YearCountValues implements DataSerializab
     public YearCountResponse(int year, YearCountValues yearCountValues) {
         super(yearCountValues);
         this.year = year;
-    }
-
-    @Override
-    public void writeData(ObjectDataOutput out) throws IOException {
-        super.writeData(out);
-        out.writeInt(year);
-    }
-
-    @Override
-    public void readData(ObjectDataInput in) throws IOException {
-        super.readData(in);
-        this.year = in.readInt();
     }
 
     public int getYear() {

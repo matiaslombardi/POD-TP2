@@ -1,12 +1,8 @@
 package ar.edu.itba.pod.models.hazelcast;
 
-import com.hazelcast.nio.ObjectDataInput;
-import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.nio.serialization.DataSerializable;
+import java.io.Serializable;
 
-import java.io.IOException;
-
-public class Reading implements DataSerializable {
+public class Reading implements Serializable {
     private int sensorId;
     private int year;
     private String month;
@@ -56,25 +52,5 @@ public class Reading implements DataSerializable {
         return time;
     }
 
-    @Override
-    public void writeData(ObjectDataOutput out) throws IOException {
-        out.writeInt(year);
-        out.writeUTF(month);
-        out.writeInt(mDate);
-        out.writeUTF(day);
-        out.writeInt(time);
-        out.writeInt(sensorId);
-        out.writeLong(hourlyCounts);
-    }
 
-    @Override
-    public void readData(ObjectDataInput in) throws IOException {
-        year = in.readInt();
-        month = in.readUTF();
-        mDate = in.readInt();
-        day = in.readUTF();
-        time = in.readInt();
-        sensorId = in.readInt();
-        hourlyCounts = in.readLong();
-    }
 }

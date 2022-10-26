@@ -2,15 +2,12 @@ package ar.edu.itba.pod.models.responses;
 
 import ar.edu.itba.pod.models.CSVWriteable;
 import ar.edu.itba.pod.models.MaxSensorReading;
-import com.hazelcast.nio.ObjectDataInput;
-import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.nio.serialization.DataSerializable;
 
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.Objects;
 
 public class MaxSensorResponse extends MaxSensorReading implements Comparable<MaxSensorResponse>,
-        DataSerializable, CSVWriteable {
+        Serializable, CSVWriteable {
     private String sensor;
 
     public MaxSensorResponse() {
@@ -23,18 +20,6 @@ public class MaxSensorResponse extends MaxSensorReading implements Comparable<Ma
 
     public String getSensor() {
         return sensor;
-    }
-
-    @Override
-    public void writeData(ObjectDataOutput out) throws IOException {
-        super.writeData(out);
-        out.writeUTF(sensor);
-    }
-
-    @Override
-    public void readData(ObjectDataInput in) throws IOException {
-        super.readData(in);
-        sensor = in.readUTF();
     }
 
     @Override

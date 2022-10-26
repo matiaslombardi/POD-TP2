@@ -12,21 +12,22 @@ import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
-public class MaxReadingMapper implements Mapper<String, Reading, String, MaxSensorReading>,
-        HazelcastInstanceAware {
+public class MaxReadingMapper implements Mapper<String, Reading, String, MaxSensorReading> {
 
-    private transient HazelcastInstance hz;
+    private final Map<Integer, Sensor> sensorMap;
 
     private final long minValue;
 
-    public MaxReadingMapper(long minValue) {
+    public MaxReadingMapper(long minValue, Map<Integer, Sensor> sensorMap) {
         this.minValue = minValue;
+        this.sensorMap = sensorMap;
     }
 
     @Override
     public void map(String key, Reading value, Context<String, MaxSensorReading> context) {
-        Sensor sensor = (Sensor) hz.getMap(Constants.SENSORS_MAP).get(value.getSensorId());
+        Sensor sensor = sensorMap.get(value.getSensorId());
         if (sensor.getStatus().equals(Status.A) && value.getHourlyCounts() >= minValue) {
             LocalDateTime dateTime = LocalDateTime.of(
                     value.getYear(),
@@ -39,8 +40,4 @@ public class MaxReadingMapper implements Mapper<String, Reading, String, MaxSens
         }
     }
 
-    @Override
-    public void setHazelcastInstance(HazelcastInstance hz) {
-        this.hz = hz;
-    }
 }

@@ -1,12 +1,9 @@
 package ar.edu.itba.pod.models;
 
-import com.hazelcast.nio.ObjectDataInput;
-import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.nio.serialization.DataSerializable;
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class YearCountValues implements DataSerializable {
+public class YearCountValues implements Serializable {
     private long weekendCount;
     private long weekdaysCount;
 
@@ -54,17 +51,6 @@ public class YearCountValues implements DataSerializable {
         sumWeekdaysCount(other.getWeekdaysCount());
     }
 
-    @Override
-    public void writeData(ObjectDataOutput out) throws IOException {
-        out.writeLong(weekdaysCount);
-        out.writeLong(weekendCount);
-    }
-
-    @Override
-    public void readData(ObjectDataInput in) throws IOException {
-        this.weekdaysCount = in.readLong();
-        this.weekendCount = in.readLong();
-    }
 
     @Override
     public boolean equals(Object o) {

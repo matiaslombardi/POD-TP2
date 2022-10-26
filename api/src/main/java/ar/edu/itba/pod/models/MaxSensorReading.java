@@ -1,14 +1,10 @@
 package ar.edu.itba.pod.models;
 
-import com.hazelcast.nio.ObjectDataInput;
-import com.hazelcast.nio.ObjectDataOutput;
-import com.hazelcast.nio.serialization.DataSerializable;
-
-import java.io.IOException;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class MaxSensorReading implements DataSerializable {
+public class MaxSensorReading implements Serializable {
     private long maxReading;
     private LocalDateTime date;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:00");
@@ -61,17 +57,5 @@ public class MaxSensorReading implements DataSerializable {
 
     public String formatDate() {
         return date.format(formatter);
-    }
-
-    @Override
-    public void writeData(ObjectDataOutput out) throws IOException {
-        out.writeLong(maxReading);
-        out.writeUTF(date.toString());
-    }
-
-    @Override
-    public void readData(ObjectDataInput in) throws IOException {
-        this.maxReading = in.readLong();
-        this.date = LocalDateTime.parse(in.readUTF());
     }
 }
