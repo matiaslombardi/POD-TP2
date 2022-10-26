@@ -1,10 +1,14 @@
 package ar.edu.itba.pod.models.responses;
 
 import ar.edu.itba.pod.models.CSVWriteable;
+import com.hazelcast.nio.ObjectDataInput;
+import com.hazelcast.nio.ObjectDataOutput;
+import com.hazelcast.nio.serialization.DataSerializable;
 
+import java.io.IOException;
 import java.util.Objects;
 
-public class TopSensorMonth implements Comparable<TopSensorMonth>, CSVWriteable {
+public class TopSensorMonth implements Comparable<TopSensorMonth>, CSVWriteable, DataSerializable {
     private String sensor;
     private String month;
     private double average;
@@ -39,7 +43,7 @@ public class TopSensorMonth implements Comparable<TopSensorMonth>, CSVWriteable 
 
     @Override
     public String[] toCSVData() {
-        return new String[]{sensor, month, String.valueOf(average)};
+        return new String[]{sensor, month, String.format("%.2f", average)};
     }
 
     @Override
@@ -53,5 +57,19 @@ public class TopSensorMonth implements Comparable<TopSensorMonth>, CSVWriteable 
     @Override
     public int hashCode() {
         return Objects.hash(sensor, month, average);
+    }
+
+    @Override
+    public void writeData(ObjectDataOutput out) throws IOException {
+        out.writeUTF(sensor);
+        out.writeUTF(month);
+        out.writeDouble(average);
+    }
+
+    @Override
+    public void readData(ObjectDataInput in) throws IOException {
+        sensor = in.readUTF();
+        month = in.readUTF();
+        average = in.readDouble();
     }
 }
