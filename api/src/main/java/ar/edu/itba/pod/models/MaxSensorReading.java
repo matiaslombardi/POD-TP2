@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 public class MaxSensorReading implements Serializable {
     private long maxReading;
     private LocalDateTime date;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:00");
+    private transient DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:00");
 
     public MaxSensorReading() {
         date = LocalDateTime.MIN;
