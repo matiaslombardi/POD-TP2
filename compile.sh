@@ -8,7 +8,7 @@ mvn clean install
 cd server/target
 tar -xzf tpe2-g6-server-1.0-SNAPSHOT-bin.tar.gz
 cd tpe2-g6-server-1.0-SNAPSHOT
-chmod +x run-server.sh
+chmod +x run-server
 
 cd $TP_PATH/client/target
 tar -xzf tpe2-g6-client-1.0-SNAPSHOT-bin.tar.gz

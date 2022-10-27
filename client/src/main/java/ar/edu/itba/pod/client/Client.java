@@ -47,7 +47,7 @@ public class Client {
 
         String timeCombined = parser.getCombine() ? "c" : "";
 
-        try (FileWriter fw = new FileWriter("time" + parser.getQuery() + timeCombined + ".txt", false)) {
+        try (FileWriter fw = new FileWriter(parser.getOutPath() + "/time" + parser.getQuery() + timeCombined + ".txt", false)) {
             fw.write(LocalDateTime.now().format(FORMATTER) + " - Inicio de lectura del archivo\n");
             ClientUtils.parseReadings(parser.getInPath(), hz);
             Map<Integer, Sensor> sensorMap = ClientUtils.parseSensorsData(parser.getInPath(), hz);
