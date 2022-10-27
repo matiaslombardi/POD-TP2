@@ -108,8 +108,8 @@
             <version>3.10.1</version>
             <configuration>
                <verbose>false</verbose>
-               <source>8</source>
-               <target>8</target>
+               <source>11</source>
+               <target>11</target>
                <encoding>utf-8</encoding>
             </configuration>
          </plugin>

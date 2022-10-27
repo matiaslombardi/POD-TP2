@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,32 +37,20 @@ public class ClientUtils {
         readings.clear();
 
         List<Reading> toAdd = new ArrayList<>();
-        try (FileReader fr = new FileReader(filePath + Constants.READINGS_FILE);
-             CSVReader reader = new CSVReaderBuilder(fr)
-                     .withCSVParser(CSV_PARSER).build()) {
-            String[] nextLine;
-            reader.readNext();
-            while ((nextLine = reader.readNext()) != null) {
-                toAdd.add(new Reading(
-                        Integer.parseInt(nextLine[Constants.YEAR]),
-                        nextLine[Constants.MONTH],
-                        Integer.parseInt(nextLine[Constants.M_DATE]),
-                        nextLine[Constants.DAY],
-                        Integer.parseInt(nextLine[Constants.TIME]),
-                        Integer.parseInt(nextLine[Constants.READING_SENSOR_ID]),
-                        Long.parseLong(nextLine[Constants.HOURLY_COUNT])));
-
-                if (toAdd.size() == 1000) {
-                    readings.addAll(toAdd);
-                    toAdd.clear();
-                }
-            }
-        } catch (IOException | CsvValidationException e) {
-            if (e instanceof FileNotFoundException)
-                LOGGER.error("File not found");
-            else
-                LOGGER.error("Error reading CSV");
-            System.exit(1);
+        try {
+            Files.readAllLines(Path.of(filePath + Constants.READINGS_FILE)).stream()
+                    .skip(1)
+                    .map(line -> line.split(";"))
+                    .forEach(nextLine -> toAdd.add(new Reading(
+                            Integer.parseInt(nextLine[Constants.YEAR]),
+                            nextLine[Constants.MONTH],
+                            Integer.parseInt(nextLine[Constants.M_DATE]),
+                            nextLine[Constants.DAY],
+                            Integer.parseInt(nextLine[Constants.TIME]),
+                            Integer.parseInt(nextLine[Constants.READING_SENSOR_ID]),
+                            Long.parseLong(nextLine[Constants.HOURLY_COUNT]))));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         readings.addAll(toAdd);
