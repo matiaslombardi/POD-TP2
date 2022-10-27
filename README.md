@@ -63,6 +63,9 @@ Pueden indicarse varias IPs, separadas por punto y coma (;).
 * `-DoutPath=YY` donde `YY` es la ruta donde se desea guardar los archivos de salida `queryX.csv` y `timeX.txt`, siendo `X` el número de la consulta.
 * `[params]` son los parámetros extras que corresponden para algunas queries.
 
+#### Parámetros adicionales de las consultas 1 y 2
+* `-Dcombine` indica si es que se quiere ejecutar la consulta con un Combiner.
+
 #### Parámetros adicionales de la consulta 3
 * `-Dmin` es la cantidad mínima de peatones registrados en la medición más alta de un sensor activo.
 
